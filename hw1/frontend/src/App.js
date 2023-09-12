@@ -1,17 +1,18 @@
-// src/App.js
+// App.js
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './components/Home';
-import PostDetail from './components/PostDetail';
+import './App.css'; // Import your CSS styles here
+import MyRoutes from './Routes';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" component={Home} />
-        <Route path="/posts/:postId" component={PostDetail} />
-      </Routes>
-    </Router>
+    <div className="App">
+      <header className="App-header">
+        <h1>My Blog</h1>
+      </header>
+      <div className="App-content">
+        <MyRoutes />
+      </div>
+    </div>
   );
 }
 
