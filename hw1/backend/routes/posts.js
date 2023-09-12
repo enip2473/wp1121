@@ -7,9 +7,11 @@ router.post('/', async (req, res) => {
   try {
     console.log(req.body);
     const post = new Post(req.body);
+    post.lastModified = new Date();
     const savedPost = await post.save();
     res.json(savedPost);
   } catch (error) {
+    console.log("Error!\n")
     res.status(400).json({ error: error.message });
   }
 });
@@ -44,7 +46,9 @@ router.get('/:id', async (req, res) => {
 // Update a post by ID
 router.put('/:id', async (req, res) => {
   try {
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
+    const post = req.body;
+    post.lastModified = new Date();
+    const updatedPost = await Post.findByIdAndUpdate(req.params.id, post, {
       new: true,
     });
     if (!updatedPost) {

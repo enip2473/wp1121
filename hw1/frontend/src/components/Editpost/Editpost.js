@@ -1,36 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import CustomDatePicker from '../Datepicker/Datepicker'; // Adjust the import path
+
 
 export default function Editpost() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [post, setPost] = useState({
     title: '',
-    date: '',
+    date: 0,
     tags: [], // Use 'tags' as an array
     content: '',
     photo: '',
-    lastModified: ''
+    lastModified: 0
   });
 
   const [tagInput, setTagInput] = useState(''); // Input for adding tags
   const [selectedFile, setSelectedFile] = useState(null); // Selected file for photo upload
-
+  
   useEffect(() => {
     if (id) {
       axios.get(`http://localhost:8000/posts/${id}`)
-        .then((response) => {
-          setPost(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching post:', error);
-        });
+      .then((response) => {
+        setPost(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching post:', error);
+      });
     }
   }, [id]);
+  
+  const [selectedDate, setSelectedDate] = useState(
+    post.date ? new Date(post.date) : undefined
+  );
+
+  const handleDateChange = (date) => {
+    console.log(typeof date)
+    setSelectedDate(date);
+    setPost({
+      ...post,
+      date: date,
+    });
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+      
     setPost({
       ...post,
       [name]: value,
@@ -114,6 +130,14 @@ export default function Editpost() {
         });
     }
   };
+
+  const handleCancelClick = () => {
+    if (id) {
+      navigate(`/view/${id}`);
+    } else {
+      navigate('/');
+    }
+  };
   
   return (
     <div>
@@ -130,11 +154,9 @@ export default function Editpost() {
         </div>
         <div>
           <label>Date:</label>
-          <input
-            type="text"
-            name="date"
-            value={post.date}
-            onChange={handleInputChange}
+          <CustomDatePicker
+            selectedDate={selectedDate}
+            onDateChange={handleDateChange}
           />
         </div>
         <div>
@@ -194,6 +216,7 @@ export default function Editpost() {
         )}
       </form>
       <button onClick={handleSaveClick}>Save</button>
+      <button onClick={handleCancelClick}>Cancel</button>
     </div>
   );
 }

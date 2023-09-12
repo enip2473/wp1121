@@ -18,11 +18,22 @@ export default function Viewpost() {
       });
   }, [id]);
 
+  console.log(typeof post.date)
+
   const handleEditClick = () => {
     navigate(`/edit/${id}`);
   };
 
-  console.log(post);
+  function tolocaltime(dateString) {
+    const dateUTC = new Date(dateString);
+    const dateLocal = dateUTC.toLocaleString(); 
+    const parts = dateLocal.split(' ')[0].split('/'); // Split the date string
+    const year = parseInt(parts[0]);
+    const month = String(parseInt(parts[1])).padStart(2, '0');
+    const day = String(parseInt(parts[2])).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+  }
 
   return (
     <div>
@@ -30,7 +41,7 @@ export default function Viewpost() {
       {/* Display post content here */}
       <div>
         <h3>Title: {post.title}</h3>
-        <p>Date: {post.date}</p>
+        <p>Date: {post.date && tolocaltime(post.date)}</p>
         <p>Tags:</p>
         <ul>
           {post.tags && post.tags.map((tag, index) => (

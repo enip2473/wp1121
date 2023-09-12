@@ -3,8 +3,11 @@ const mongoose = require('mongoose');
 const postSchema = new mongoose.Schema({
   title: String,
   content: String,
-  date: String,
-  tags: [String], 
+  date: Date,
+  tags: [String],
+  photo: String, // Store the file path
+  lastModified: Date,
 });
+
 
 module.exports = mongoose.model('Post', postSchema);
