@@ -13,6 +13,7 @@ export default function myRoutes() {
         <Route path='/' element={<Main />}/>
         <Route path="/view/:id" element={<Viewpost />} />
         <Route path="/edit/:id" element={<Editpost />} />
+        <Route path="/edit" element={<Editpost />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>

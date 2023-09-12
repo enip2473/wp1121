@@ -15,7 +15,6 @@ export default function Main() {
         console.error('Error fetching posts:', error);
       });
   }, []); // The empty dependency array ensures this effect runs only once
-  console.log(posts);
 
   return (
     <div>

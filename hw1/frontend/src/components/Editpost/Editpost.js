@@ -10,9 +10,12 @@ export default function Editpost() {
     date: '',
     tags: [], // Use 'tags' as an array
     content: '',
+    photo: '',
+    lastModified: ''
   });
 
   const [tagInput, setTagInput] = useState(''); // Input for adding tags
+  const [selectedFile, setSelectedFile] = useState(null); // Selected file for photo upload
 
   useEffect(() => {
     if (id) {
@@ -48,11 +51,55 @@ export default function Editpost() {
     }
   };
 
+  const handleFileUpload = (event) => {
+    const selectedFile = event.target.files[0]; // Get the first selected file
+    if (selectedFile) {
+      uploadPhotoAndGetInfo(selectedFile)
+        .then((result) => {
+          setPost({
+            ...post,
+            photo: result.photo,
+          });
+        })
+      setSelectedFile(selectedFile);
+    }
+  };
+
+  // Function to upload a photo and get its path and name as a response
+  const uploadPhotoAndGetInfo = (file) => {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        return reject('No file selected');
+      }
+
+      // Create a FormData object to include the selected file in the request
+      const formData = new FormData();
+      formData.append('photo', file); // Use 'photo' or the field name your server expects
+
+      // Send a POST request to upload the photo
+      axios.post('http://localhost:8000/photos/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then((response) => {
+          const { photo } = response.data;
+          resolve({ photo });
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
+
   const handleSaveClick = () => {
+    console.log(post);
     if (id) {
+      console.log(post.photo);
       axios.put(`http://localhost:8000/posts/${id}`, post)
         .then(() => {
-          navigate('/');
+          navigate(`/view/${id}`);
         })
         .catch((error) => {
           console.error('Error updating post:', error);
@@ -67,7 +114,7 @@ export default function Editpost() {
         });
     }
   };
-
+  
   return (
     <div>
       <h2>{id ? 'Edit Post' : 'Create New Post'}</h2>
@@ -117,6 +164,34 @@ export default function Editpost() {
             onChange={handleInputChange}
           />
         </div>
+        <div>
+          <label>Upload Photo:</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+          />
+        </div>
+        {selectedFile && (
+          <div>
+            <label>Uploaded Photo Preview:</label>
+            <img
+              src={URL.createObjectURL(selectedFile)}
+              alt="Uploaded"
+              style={{ maxWidth: '100px' }}
+            />
+          </div>
+        )}
+        {!selectedFile && post.photo && (
+          <div>
+            <label>Uploaded Photo Preview:</label>
+            <img
+              src={post.photo}
+              alt="Uploaded"
+              style={{ maxWidth: '100px' }}
+            />
+          </div>
+        )}
       </form>
       <button onClick={handleSaveClick}>Save</button>
     </div>

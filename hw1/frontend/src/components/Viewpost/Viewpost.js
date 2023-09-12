@@ -6,6 +6,7 @@ export default function Viewpost() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [post, setPost] = useState({});
+
   useEffect(() => {
     // Fetch the post by ID when the component mounts
     axios.get(`http://localhost:8000/posts/${id}`)
@@ -20,6 +21,9 @@ export default function Viewpost() {
   const handleEditClick = () => {
     navigate(`/edit/${id}`);
   };
+
+  console.log(post);
+
   return (
     <div>
       <h2>View Post</h2>
@@ -34,6 +38,16 @@ export default function Viewpost() {
           ))}
         </ul>
         <p>Content: {post.content}</p>
+        {post.photo && (
+          <div>
+            <p>Photo:</p>
+            <img
+              src={post.photo}
+              alt="hi"
+              style={{ maxWidth: '100%' }}
+            />
+          </div>
+        )}
       </div>
       <button onClick={handleEditClick}>Edit Post</button>
     </div>
