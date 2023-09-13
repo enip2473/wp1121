@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { formatTime } from '../Common/Common'
 
 export default function Viewpost() {
   const navigate = useNavigate();
@@ -18,22 +19,9 @@ export default function Viewpost() {
       });
   }, [id]);
 
-  console.log(typeof post.date)
-
   const handleEditClick = () => {
     navigate(`/edit/${id}`);
   };
-
-  function tolocaltime(dateString) {
-    const dateUTC = new Date(dateString);
-    const dateLocal = dateUTC.toLocaleString(); 
-    const parts = dateLocal.split(' ')[0].split('/'); // Split the date string
-    const year = parseInt(parts[0]);
-    const month = String(parseInt(parts[1])).padStart(2, '0');
-    const day = String(parseInt(parts[2])).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-    return formattedDate;
-  }
 
   return (
     <div>
@@ -41,7 +29,7 @@ export default function Viewpost() {
       {/* Display post content here */}
       <div>
         <h3>Title: {post.title}</h3>
-        <p>Date: {post.date && tolocaltime(post.date)}</p>
+        <p>Date: {post.date && formatTime(post.date)}</p>
         <p>Tags:</p>
         <ul>
           {post.tags && post.tags.map((tag, index) => (

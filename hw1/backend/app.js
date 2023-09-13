@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const postsRoute = require('./routes/posts'); // Import the posts routes
 const photoRoute = require('./routes/photos');
+const tagRoute = require('./routes/tags');
 
 // Require the file upload router
 const app = express();
@@ -28,6 +29,7 @@ app.use(bodyParser.json());
 // Routes
 app.use('/posts', postsRoute); // Use the posts routes
 app.use('/photos', photoRoute); // Use the posts routes
+app.use('/tags', tagRoute); // Use the posts routes
 
 // Start the server
 const port = process.env.PORT || 8000;

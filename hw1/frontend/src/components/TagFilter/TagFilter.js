@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export default function TagFilter({ tags, onFilterChange }) {
   const [selectedTags, setSelectedTags] = useState([]);
+  const [relationship, setRelationship] = useState('AND'); // Default to AND
 
   const handleTagChange = (tag) => {
     const updatedTags = [...selectedTags];
@@ -11,8 +12,14 @@ export default function TagFilter({ tags, onFilterChange }) {
       updatedTags.push(tag);
     }
     setSelectedTags(updatedTags);
-    onFilterChange(updatedTags); // Notify the parent component of filter changes
+    onFilterChange(updatedTags, relationship); // Notify the parent component of filter changes
   };
+
+  const handleRelationshipChange = (e) => {
+    setRelationship(e.target.value);
+    onFilterChange(selectedTags, e.target.value); // Notify the parent component of filter changes
+  };
+
 
   return (
     <div>
@@ -28,6 +35,16 @@ export default function TagFilter({ tags, onFilterChange }) {
           {tag}
         </label>
       ))}
+      <div>
+        <label>Relationship:</label>
+        <select value={relationship} onChange={handleRelationshipChange}>
+          <option value="AND">AND</option>
+          <option value="OR">OR</option>
+        </select>
+      </div>
     </div>
+  
   );
 }
+
+

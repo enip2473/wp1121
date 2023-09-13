@@ -1,12 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const Post = require('../models/post');
+const Tag = require('../models/tag');
 
 // Create a new post
 router.post('/', async (req, res) => {
   try {
-    console.log(req.body);
     const post = new Post(req.body);
+    
+    for (const tag of post.tags) {
+      const existingTag = await Tag.findOne({ name: tag });
+      if (!existingTag) {
+        const newTag = new Tag({ name: tag });
+        await newTag.save();
+      }
+    }
+
     post.lastModified = new Date();
     const savedPost = await post.save();
     res.json(savedPost);
@@ -47,6 +56,15 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const post = req.body;
+
+    for (const tag of post.tags) {
+      const existingTag = await Tag.findOne({ name: tag });
+      if (!existingTag) {
+        const newTag = new Tag({ name: tag });
+        await newTag.save();
+      }
+    }
+
     post.lastModified = new Date();
     const updatedPost = await Post.findByIdAndUpdate(req.params.id, post, {
       new: true,
