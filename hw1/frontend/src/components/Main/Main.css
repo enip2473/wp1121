@@ -1,0 +1,100 @@
+/* CSS for the Main Page */
+  body {
+    background-color: #0c0c0c;
+  }
+
+  .main-page {
+    background-color: #0c0c0c;
+    padding: 0px;
+  }
+  
+  /* Header Styling */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #4d4d4d;
+    color: #fff;
+    padding: 5px;
+    font-size: 24px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    margin-top: 0px;
+  }
+  
+  /* Filter Styling */
+  .filter {
+    border: none;
+  }
+  
+  /* "My Diary" Styling */
+  .diary-title {
+    text-align: center;
+  }
+  
+  /* "New Post" Button Styling */
+  .new-post-button {
+    background-color: #004288;
+    color: #fff;
+    padding: 3px 5px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 5px;
+    font-size: small;
+  }
+  
+  /* Post Block Styling */
+  .post-block {
+    background-color: #fff;
+    margin-bottom: 2px;
+    padding: 2px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .post-block:hover {
+    background-color: #adadad;
+    cursor: pointer;
+  }
+  
+  /* Style post content (title, date, content) */
+  .post-title {
+    font-size: 20px;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+  
+  .post-date {
+    color: #888;
+  }
+  
+  .post-content {
+    margin-top: 10px;
+  }
+  
+  /* Style View Post Link */
+  .view-post-link {
+    display: block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .post-grid {
+    display: flex;
+    flex-wrap: wrap; /* Wrap to the next row when the container is full */
+    gap: 8px; /* Adjust the gap between blocks as needed */
+  }
+  
+  .post-block {
+    width: calc(30%); /* Adjust the width as needed for your layout */
+    padding: 8px;
+    background-color: #f0f0f0; /* Set a background color for the blocks */
+    border: 1px solid #ddd; /* Add a border for separation */
+    border-radius: 8px; /* Add rounded corners for a better look */
+  }
+  
+  /* Style the tag filter component as needed */
+  
+  

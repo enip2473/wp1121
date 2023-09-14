@@ -27,11 +27,10 @@ db.once('open', () => {
 app.use(bodyParser.json());
 
 // Routes
-app.use('/posts', postsRoute); // Use the posts routes
-app.use('/photos', photoRoute); // Use the posts routes
-app.use('/tags', tagRoute); // Use the posts routes
+app.use('/posts', postsRoute); 
+app.use('/photos', photoRoute);
+app.use('/tags', tagRoute);
 
-// Start the server
 const port = process.env.PORT || 8000;
 
 app.listen(port, () => {

@@ -18,12 +18,16 @@ export default function Editpost() {
 
   const [tagInput, setTagInput] = useState(''); // Input for adding tags
   const [selectedFile, setSelectedFile] = useState(null); // Selected file for photo upload
+  const [selectedDate, setSelectedDate] = useState(undefined);
   
   useEffect(() => {
     if (id) {
       axios.get(`http://localhost:8000/posts/${id}`)
       .then((response) => {
         setPost(response.data);
+        if (response.data.date) {
+          setSelectedDate(new Date(response.data.date));
+        }
       })
       .catch((error) => {
         console.error('Error fetching post:', error);
@@ -31,12 +35,8 @@ export default function Editpost() {
     }
   }, [id]);
   
-  const [selectedDate, setSelectedDate] = useState(
-    post.date ? new Date(post.date) : undefined
-  );
 
   const handleDateChange = (date) => {
-    console.log(typeof date)
     setSelectedDate(date);
     setPost({
       ...post,
@@ -70,13 +70,6 @@ export default function Editpost() {
   const handleFileUpload = (event) => {
     const selectedFile = event.target.files[0]; // Get the first selected file
     if (selectedFile) {
-      uploadPhotoAndGetInfo(selectedFile)
-        .then((result) => {
-          setPost({
-            ...post,
-            photo: result.photo,
-          });
-        })
       setSelectedFile(selectedFile);
     }
   };
@@ -88,7 +81,6 @@ export default function Editpost() {
         return reject('No file selected');
       }
 
-      // Create a FormData object to include the selected file in the request
       const formData = new FormData();
       formData.append('photo', file); // Use 'photo' or the field name your server expects
 
@@ -99,7 +91,8 @@ export default function Editpost() {
           },
         })
         .then((response) => {
-          const { photo } = response.data;
+          const
+           { photo } = response.data;
           resolve({ photo });
         })
         .catch((error) => {
@@ -109,10 +102,8 @@ export default function Editpost() {
   };
 
 
-  const handleSaveClick = () => {
-    console.log(post);
+  const postToBackend = (post) => {
     if (id) {
-      console.log(post.photo);
       axios.put(`http://localhost:8000/posts/${id}`, post)
         .then(() => {
           navigate(`/view/${id}`);
@@ -123,11 +114,25 @@ export default function Editpost() {
     } else {
       axios.post('http://localhost:8000/posts', post)
         .then(() => {
-          navigate('/');
+          navigate(`/view/${post.id}`);
         })
         .catch((error) => {
           console.error('Error creating post:', error);
         });
+    }
+  }
+
+  const handleSaveClick = () => {
+    if (selectedFile) {
+      uploadPhotoAndGetInfo(selectedFile)
+        .then((response) => {
+          post.photo = response.photo;
+        })
+        .then(() => {
+          postToBackend(post);
+        })
+    } else {
+      postToBackend(post);
     }
   };
 

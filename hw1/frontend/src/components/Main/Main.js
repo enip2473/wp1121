@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import TagFilter from '../TagFilter/TagFilter';
+import DropdownCheckbox from '../DropdownCheckbox/DropdownCheckbox';
 import { formatTime } from '../Common/Common'
+import './Main.css'; 
+
 
 export default function Main() {
   const [allPosts, setAllPosts] = useState([]);
   const [posts, setPosts] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
+  
+  let navigate = useNavigate(); 
+  const routeChange = (path) => {navigate(path);}
 
   // Callback function to handle filter changes
   const handleFilterChange = (tags, relationship) => {
@@ -16,19 +21,16 @@ export default function Main() {
     let filteredPosts = [];
   
     if (relationship === "AND") {
-      // Filter posts where all selected tags are present
       filteredPosts = allPosts.filter((post) =>
         tags.every((tag) => post.tags.includes(tag))
       );
     } else if (relationship === "OR") {
-      // Filter posts where at least one selected tag is present
       filteredPosts = allPosts.filter((post) =>
         tags.some((tag) => post.tags.includes(tag))
       );
     } 
 
     setPosts(filteredPosts);
-
   };
   
   useEffect(() => {
@@ -55,7 +57,6 @@ export default function Main() {
     // Fetch tags from the backend API when the component mounts
     axios.get('http://localhost:8000/tags')
       .then((response) => {
-        console.log(response.data);
         const tags = response.data.map((obj) => obj.name);
         setAvailableTags(tags);
       })
@@ -65,24 +66,28 @@ export default function Main() {
   }, []); // The empty dependency array ensures this effect runs only once
 
   return (
-    <div>
-      <h2>Main Page</h2>
-      <TagFilter tags={availableTags} onFilterChange={handleFilterChange} />
+    <div className="main-page">
+      <div className="header">
+        <DropdownCheckbox availableTags={availableTags} onFilterChange={handleFilterChange} />
+        <div className="diary-title">My Diary</div>
+        <div className="new-post-button">
+          <Link to="/edit" className="new-post-button">
+            New
+          </Link>
+        </div>
+      </div>
 
-      <Link to="/edit">
-        <button>Create New Post</button>
-      </Link>
-
-      <div>
-        {posts.map((post) => (
-          <div key={post._id}>
-            <h3>{post.title}</h3>
-            <p>{formatTime(post.date)}</p>
-            <p>{post.content}</p>
-            <Link to={`/view/${post._id}`}>View Post</Link>
-          </div>
-        ))}
+      <div className="post-grid">
+      {posts.map((post) => (
+        <div key={post._id} className="post-block" onClick={()=>routeChange(`/view/${post._id}`)}>
+          <h3 className="post-title">{post.title}</h3>
+          <p className="post-date">{formatTime(post.date)}</p>
+          <p className="post-content">{post.content}</p>
+        </div>
+      ))}
       </div>
     </div>
   );
 }
+
+

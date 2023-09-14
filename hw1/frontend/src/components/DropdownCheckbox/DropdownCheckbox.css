@@ -1,0 +1,50 @@
+/* styles.css */
+
+/* Style for the custom dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Style for the dropdown toggle button */
+.dropdown-toggle {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.dropdown-menu-open {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: block;
+    background-color: #2b2b2b;
+    padding: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+/* Style for the dropdown menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Show the dropdown menu when the dropdown button is clicked */
+
+/* Style for the checkbox labels within the dropdown menu */
+.checkbox-label {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 6px;
+}
