@@ -29,8 +29,10 @@ export default function DropdownCheckbox({ availableTags, onFilterChange }) {
   };
 
   return (
-    <div class="dropdown">
-      <button onClick={handleDropdownToggle} class="dropbtn"> Tags </button>
+    <div className="dropdown">
+      <div onClick={handleDropdownToggle} className="drop-button">
+          Select Tags
+      </div>
       <div className={`dropdown-menu${isDropdownOpen ? '-open' : ''}`}>
         {availableTags.map((tag) => (
           <label key={tag} className="checkbox-label">

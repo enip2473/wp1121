@@ -70,7 +70,7 @@ export default function Main() {
       <div className="header">
         <DropdownCheckbox availableTags={availableTags} onFilterChange={handleFilterChange} />
         <div className="diary-title">My Diary</div>
-        <div className="new-post-button">
+        <div>
           <Link to="/edit" className="new-post-button">
             New
           </Link>
@@ -81,8 +81,19 @@ export default function Main() {
       {posts.map((post) => (
         <div key={post._id} className="post-block" onClick={()=>routeChange(`/view/${post._id}`)}>
           <h3 className="post-title">{post.title}</h3>
-          <p className="post-date">{formatTime(post.date)}</p>
-          <p className="post-content">{post.content}</p>
+          <div className="post-body">
+            <div className="left-body">
+              <p className="post-date">{formatTime(post.date)}</p>
+            </div>
+            <div className="right-body">
+              {
+                post.tags.map((tag) => (
+                  <div className='body-tag'>{tag}</div>
+                ))
+              }
+            </div>
+          </div>
+          <div className="post-content">{post.content}</div>
         </div>
       ))}
       </div>

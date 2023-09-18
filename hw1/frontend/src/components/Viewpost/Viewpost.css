@@ -1,0 +1,106 @@
+/* Add your CSS classes here */
+
+.body {
+  background-color: #fff;
+}
+
+.view-post-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.view-post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.view-post-date {
+  font-size: 14px;
+  color: #888;
+}
+
+.view-post-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+/* 
+.buttons {
+  display: flex;
+}
+
+.home-edit-button {
+  text-decoration: none;
+  padding: 5px 5px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  font-weight: bold;
+  width: 50%;
+  margin: 3px;
+  
+} */
+.buttons {
+  display: flex;
+  justify-content: space-between; /* 让按钮在容器中等宽分布 */
+}
+
+.home-edit-button {
+  flex: 1; /* 增加按钮的弹性以使它们等宽 */
+  text-decoration: none;
+  padding: 5px 0px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 12px;
+  margin: 3px;
+  width:50px;
+  text-align: center;
+}
+
+.view-post-content {
+  display: flex;
+}
+
+.view-post-left {
+  flex: 1;
+}
+
+.view-post-tags {
+  display: flex;
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.view-tags {
+  padding: 5px 0px;
+  background-color: #08483e;
+  color: #fff;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 12px;
+  margin: 3px;
+  text-align: center;
+}
+
+.view-post-content-text {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.view-post-right {
+  flex: 1;
+  text-align: center;
+}
+
+.view-post-right img {
+  max-width: 100%;
+  height: auto;
+}

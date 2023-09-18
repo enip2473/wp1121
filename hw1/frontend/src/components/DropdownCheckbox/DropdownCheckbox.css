@@ -4,12 +4,24 @@
 .dropdown {
     position: relative;
     display: inline-block;
+    border: 0;
+    padding: 0px;
 }
 
+.drop-button {
+    background-color: #004288;
+    color: #fff;
+    padding: 3% 5px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 5px;
+    font-size: small;
+}
 /* Style for the dropdown toggle button */
 .dropdown-toggle {
-    background-color: #fff;
-    border: 1px solid #ccc;
+    background-color: #5C8374;
     padding: 8px 12px;
     cursor: pointer;
 }
@@ -23,6 +35,8 @@
     padding: 4px;
     max-height: 200px;
     overflow-y: auto;
+    border-radius: 5px;
+
 }
 /* Style for the dropdown menu */
 .dropdown-menu {
@@ -30,8 +44,7 @@
     top: 100%;
     left: 0;
     display: none;
-    background-color: #fff;
-    border: 1px solid #ccc;
+    background-color: #5C8374;
     padding: 4px;
     max-height: 200px;
     overflow-y: auto;
@@ -43,6 +56,7 @@
 .checkbox-label {
     display: flex;
     margin-bottom: 8px;
+    font-size: 8px;
 }
 
 .checkbox-label input[type="checkbox"] {
