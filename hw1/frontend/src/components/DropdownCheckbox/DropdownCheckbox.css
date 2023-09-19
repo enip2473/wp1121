@@ -55,10 +55,11 @@
 /* Style for the checkbox labels within the dropdown menu */
 .checkbox-label {
     display: flex;
-    margin-bottom: 8px;
+    margin-bottom: 0px;
     font-size: 8px;
 }
 
 .checkbox-label input[type="checkbox"] {
+    margin-top: 1px;
     margin-right: 6px;
 }

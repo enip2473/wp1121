@@ -11,6 +11,7 @@
   font-family: Arial, sans-serif;
   background-color: #fff;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
 }
 
 .view-post-header {
@@ -54,7 +55,7 @@
   flex: 1; /* 增加按钮的弹性以使它们等宽 */
   text-decoration: none;
   padding: 5px 0px;
-  background-color: #007bff;
+  background-color: #0a89ea;
   color: #fff;
   border-radius: 5px;
   font-weight: bold;
@@ -79,9 +80,28 @@
   margin-bottom: 10px;
 }
 
+.view-post-moods {
+  display: flex;
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+
 .view-tags {
-  padding: 5px 0px;
+  padding: 2px 2px;
   background-color: #08483e;
+  color: #fff;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 12px;
+  margin: 3px;
+  text-align: center;
+}
+
+.view-moods {
+  padding: 2px 2px;
+  background-color: #c4d907;
   color: #fff;
   border-radius: 5px;
   font-weight: bold;

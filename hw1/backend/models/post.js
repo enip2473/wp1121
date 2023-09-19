@@ -5,6 +5,7 @@ const postSchema = new mongoose.Schema({
   content: String,
   date: Date,
   tags: [String],
+  moods: [String],
   photo: String, // Store the file path
   lastModified: Date,
 });

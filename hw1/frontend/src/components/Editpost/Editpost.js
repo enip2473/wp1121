@@ -11,18 +11,23 @@ export default function Editpost() {
     title: '',
     date: 0,
     tags: [], // Use 'tags' as an array
+    moods: [],
     content: '',
     photo: '',
     lastModified: 0
   });
 
   const [tagInput, setTagInput] = useState(''); // Input for adding tags
+  const [moodInput, setMoodInput] = useState(''); // Input for adding tags
   const [selectedFile, setSelectedFile] = useState(null); // Selected file for photo upload
   const [selectedDate, setSelectedDate] = useState(undefined);
-  
+  const [allTags, setAllTags] = useState(null);
+  const [allMoods, setAllMoods] = useState(null);
+  const backend_url = "http://localhost:8000";
+
   useEffect(() => {
     if (id) {
-      axios.get(`http://localhost:8000/posts/${id}`)
+      axios.get(`${backend_url}/posts/${id}`)
       .then((response) => {
         setPost(response.data);
         if (response.data.date) {
@@ -34,6 +39,29 @@ export default function Editpost() {
       });
     }
   }, [id]);
+
+  useEffect(() => {
+    axios.get(`${backend_url}/tags`)
+      .then((response) => {
+        const tags = response.data.map((obj) => obj.name);
+        setAllTags(tags);
+      })
+      .catch((error) => {
+        console.error('Error fetching tags:', error);
+      });
+  }, []); 
+
+  useEffect(() => {
+    axios.get(`${backend_url}/moods`)
+      .then((response) => {
+        const moods = response.data.map((obj) => obj.name);
+        setAllMoods(moods);
+      })
+      .catch((error) => {
+        console.error('Error fetching moods:', error);
+      });
+  }, []); 
+
   
 
   const handleDateChange = (date) => {
@@ -63,8 +91,8 @@ export default function Editpost() {
         ...post,
         tags: [...post.tags, tagInput.trim()],
       });
-      setTagInput('');
     }
+    setTagInput('');
   };
 
   const handleDeleteTag = (index) => {
@@ -75,6 +103,30 @@ export default function Editpost() {
       tags: updatedTags
     })
   };
+
+  const handleMoodInputChange = (event) => {
+    setMoodInput(event.target.value);
+  };
+
+  const handleAddMood = () => {
+    if (moodInput.trim() && !post.moods.includes(moodInput)) {
+      setPost({
+        ...post,
+        moods: [...post.moods, moodInput.trim()],
+      });
+    }
+    setMoodInput('');
+  };
+
+  const handleDeleteMood = (index) => {
+    const updatedMoods = [...post.moods];
+    updatedMoods.splice(index, 1);
+    setPost({
+      ...post,
+      moods: updatedMoods
+    })
+  };
+
 
   const handleFileUpload = (event) => {
     const selectedFile = event.target.files[0]; // Get the first selected file
@@ -94,7 +146,7 @@ export default function Editpost() {
       formData.append('photo', file); // Use 'photo' or the field name your server expects
 
       // Send a POST request to upload the photo
-      axios.post('http://localhost:8000/photos/upload', formData, {
+      axios.post(`${backend_url}/photos/upload`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -113,15 +165,15 @@ export default function Editpost() {
 
   const postToBackend = (post) => {
     if (id) {
-      axios.put(`http://localhost:8000/posts/${id}`, post)
+      axios.put(`${backend_url}/posts/${id}`, post)
         .then(() => {
-          navigate(`/view/${id}`);
+          navigate(`/${id}/view`);
         })
         .catch((error) => {
           console.error('Error updating post:', error);
         });
     } else {
-      axios.post('http://localhost:8000/posts', post)
+      axios.post(`${backend_url}/posts`, post)
         .then(() => {
           navigate(`/`);
         })
@@ -132,6 +184,10 @@ export default function Editpost() {
   }
 
   const handleSaveClick = () => {
+    if (!post.content || !post.title) {
+      alert("Title and Content are required.")
+      return;
+    }
     if (selectedFile) {
       uploadPhotoAndGetInfo(selectedFile)
         .then((response) => {
@@ -147,11 +203,25 @@ export default function Editpost() {
 
   const handleCancelClick = () => {
     if (id) {
-      navigate(`/view/${id}`);
+      navigate(`/${id}/view`);
     } else {
       navigate('/');
     }
   };
+
+  const handleDeletePost = () => {
+    if (window.confirm('Are you sure you want to delete this post?')) {
+      axios
+        .delete(`${backend_url}/posts/${id}`)
+        .then(() => {
+          navigate(`/`);
+        })
+        .catch((error) => {
+          console.error('Error deleting post:', error);
+        });
+    }
+  };
+
   return (
     <div className="edit-post-container">
       <div className="edit-post-header">
@@ -159,7 +229,6 @@ export default function Editpost() {
           <CustomDatePicker
             selectedDate={selectedDate}
             onDateChange={handleDateChange}
-            placeholder="Select Date"
           />
         </div>
         <div className="edit-post-title">
@@ -188,36 +257,70 @@ export default function Editpost() {
               value={tagInput}
               onChange={handleTagInputChange}
               placeholder="Add tags..."
+              list="tags"
             />
+            <datalist id="tags">
+              {allTags && allTags.map((tag, index) => (
+                <option key={tag} value={tag} />
+              ))}
+            </datalist>
             <button type="button" onClick={handleAddTag}>
               Add Tag
             </button>
           </div>
-          <ul>
-            {post.tags.map((tag, index) => (
-              <li key={index}>
-                {tag}
-                <button onClick={() => handleDeleteTag(index)}>Delete</button>
-              </li>
+          <div className='all-tags'>
+            {post.tags && post.tags.map((tag, index) => (
+              <div className='tag-container' key={index}>
+                <div className='edit-tags'>{tag}</div>
+                <span
+                  className='delete-tag'
+                  onClick={() => handleDeleteTag(index)}
+                >
+                  &#x2716; {/* Unicode character for 'x' */}
+                </span>
+              </div>
             ))}
-          </ul>
-          <div className="edit-post-content-text">
-            <textarea
-              name="content"
-              value={post.content}
-              onChange={handleInputChange}
-              placeholder="Contents"
+          </div>
+          <div className="edit-post-moods">
+            <input
+              type="text"
+              value={moodInput}
+              onChange={handleMoodInputChange}
+              placeholder="Add moods..."
+              list="moods"
             />
+            <datalist id="moods">
+              {allMoods && allMoods.map((mood, index) => (
+                <option key={mood} value={mood} />
+              ))}
+            </datalist>
+            <button type="button" onClick={handleAddMood}>
+              Add Mood
+            </button>
+          </div>
+          <div className='all-moods'>
+            {post.moods && post.moods.map((mood, index) => (
+              <div className='mood-container' key={index}>
+                <div className='edit-moods'>{mood}</div>
+                <span
+                  className='delete-mood'
+                  onClick={() => handleDeleteMood(index)}
+                >
+                  &#x2716; 
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
         <div className="edit-post-right">
           <div className='edit-photo'>
-            <text>Upload Photo</text>
+            <div>Upload Photo</div>
             <input
               type="file"
               accept="image/*"
               onChange={handleFileUpload}
+              value=""
             />
           </div>
           {selectedFile && (
@@ -239,6 +342,26 @@ export default function Editpost() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="edit-post-content-text">
+        <textarea
+          name="content"
+          value={post.content}
+          onChange={handleInputChange}
+          placeholder="Contents"
+          style={{ width: '97%', height: '200px' }} // Use
+        />
+      </div>
+
+      <div className="delete-post-button">
+        <button
+          type="button"
+          onClick={handleDeletePost}
+          className='delete-button'
+        >
+          Delete Post
+        </button>
       </div>
     </div>
   )

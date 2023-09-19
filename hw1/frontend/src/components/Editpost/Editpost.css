@@ -1,10 +1,16 @@
 /* Add your CSS classes here */
 
-.body {
+  .body {
     background-color: #fff;
   }
+
+  ul {
+    list-style-type: none;
+  }
+  
   
   .edit-post-container {
+    border-radius: 5px;
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
@@ -67,6 +73,11 @@
     margin: 3px;
     width:50px;
     text-align: center;
+    cursor: pointer;
+  }
+
+  .delete-button {
+    color: 'red';
   }
   
   .edit-post-content {
@@ -97,4 +108,60 @@
     max-width: 100%;
     height: auto;
   }
+
+  .tag-container {
+    display: flex;
+    align-items: center; /* Vertically center the content */
+  }
+
+  .mood-container {
+    display: flex;
+    align-items: center; /* Vertically center the content */
+  }
+
+    
+  .delete-tag {
+    cursor: pointer;
+  }
+
+  .delete-mood {
+    cursor: pointer;
+  }
+
+  .all-tags {
+    display: flex;
+    margin-bottom: 3px;
+  }
+
+  .all-moods {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  
+  .edit-tags {
+    padding: 2px 2px;
+    background-color: #08483e;
+    color: #fff;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 3px;
+    text-align: center;
+    max-width: max-content;
+  }
+
+  .edit-moods {
+    padding: 2px 2px;
+    background-color: #c4d907;
+    color: #fff;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 3px;
+    text-align: center;
+    max-width: max-content;
+  }
+
+
   

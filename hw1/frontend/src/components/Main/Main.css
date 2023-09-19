@@ -114,6 +114,18 @@
     text-align: center;  
   }
 
+  .body-mood {
+    padding: 1px 3px;
+    background-color: #c4d907;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 8px;
+    margin: 2px;
+    height: 15px;
+    text-align: center;  
+  }
+
+
   .post-block {
     width: calc(30%); /* Adjust the width as needed for your layout */
     padding: 8px;
