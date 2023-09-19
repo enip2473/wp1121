@@ -9,7 +9,7 @@ export default function Editpost() {
   const { id } = useParams();
   const [post, setPost] = useState({
     title: '',
-    date: 0,
+    date: new Date(),
     tags: [], // Use 'tags' as an array
     moods: [],
     content: '',
@@ -61,8 +61,6 @@ export default function Editpost() {
         console.error('Error fetching moods:', error);
       });
   }, []); 
-
-  
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -209,7 +207,7 @@ export default function Editpost() {
     }
   };
 
-  const handleDeletePost = () => {
+  const handleDeleteClick = () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       axios
         .delete(`${backend_url}/posts/${id}`)
@@ -240,11 +238,17 @@ export default function Editpost() {
             placeholder="Title"
           /></div>
         <div className="buttons">
-            <div className="home-edit-button" onClick={handleCancelClick}>
-              Cancel
-            </div>
             <div className="home-edit-button" onClick={handleSaveClick}>
               Save
+            </div>
+            {
+              post._id && 
+              <div className="home-edit-button" onClick={handleDeleteClick}>
+                Delete
+              </div>
+            }
+            <div className="home-edit-button" onClick={handleCancelClick}>
+              Cancel
             </div>
         </div>
       </div>
@@ -352,16 +356,6 @@ export default function Editpost() {
           placeholder="Contents"
           style={{ width: '97%', height: '200px' }} // Use
         />
-      </div>
-
-      <div className="delete-post-button">
-        <button
-          type="button"
-          onClick={handleDeletePost}
-          className='delete-button'
-        >
-          Delete Post
-        </button>
       </div>
     </div>
   )

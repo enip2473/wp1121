@@ -15,7 +15,7 @@ export default function DropdownCheckbox({ availableTags, availableMoods, onFilt
       updatedTags.push(tag);
     }
     setSelectedTags(updatedTags);
-    onFilterChange(updatedTags, relationship); // Notify the parent component of filter changes
+    onFilterChange(updatedTags, selectedMoods, relationship); // Notify the parent component of filter changes
   };
 
   const handleMoodChange = (mood) => {
@@ -26,13 +26,13 @@ export default function DropdownCheckbox({ availableTags, availableMoods, onFilt
       updatedMoods.push(mood);
     }
     setSelectedMoods(updatedMoods);
-    onFilterChange(updatedMoods, relationship); // Notify the parent component of filter changes
+    onFilterChange(selectedTags, updatedMoods, relationship); // Notify the parent component of filter changes
   };
 
 
   const handleRelationshipChange = (e) => {
     setRelationship(e.target.value);
-    onFilterChange(selectedTags, e.target.value); // Notify the parent component of filter changes
+    onFilterChange(selectedTags, selectedMoods, e.target.value); // Notify the parent component of filter changes
   };
 
   const handleDropdownToggle = () => {

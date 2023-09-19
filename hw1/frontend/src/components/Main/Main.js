@@ -20,30 +20,17 @@ export default function Main() {
     // Implement filtering logic based on selected tags and relationship
     // For example, filter posts based on tags and relationship
     let filteredPosts = [];
-  
     if (relationship === "AND") {
-      filteredPosts = allPosts.filter((post) => 
+      filteredPosts = allPosts.filter((post) =>
         tags.every((tag) => post.tags.includes(tag))
         && moods.every((mood) => post.moods.includes(mood))
       );
     } else if (relationship === "OR") {
       filteredPosts = allPosts.filter((post) =>
-        tags.some((tag) => post.tags.includes(tag))
-        || moods.some((mood) => post.moods.includes(mood))
+        (tags.length === 0 || tags.some((tag) => post.tags.includes(tag)))
+        && (moods.length === 0 || moods.some((mood) => post.moods.includes(mood)))
       );
     } 
-
-    if (relationship === "AND") {
-      filteredPosts = allPosts.filter((post) =>
-        tags.every((tag) => post.tags.includes(tag))
-      );
-    } else if (relationship === "OR") {
-      filteredPosts = allPosts.filter((post) =>
-        tags.some((tag) => post.tags.includes(tag))
-      );
-    } 
-
-
     setPosts(filteredPosts);
   };
 
