@@ -11,7 +11,7 @@ export default function Main() {
   const [posts, setPosts] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [availableMoods, setAvailableMoods] = useState([]);
-  
+  const backend_url = 'http://localhost:8000'
   let navigate = useNavigate(); 
   const routeChange = (path) => {navigate(path);}
 
@@ -41,7 +41,7 @@ export default function Main() {
   
   useEffect(() => {
     // Fetch posts from the backend API when the component mounts
-    axios.get('http://localhost:8000/posts')
+    axios.get(`${backend_url}/posts`)
       .then((response) => {
         // Sort posts by lastModified field in descending order (newest first)
         const sortedPosts = response.data.slice().sort((a, b) => {
@@ -61,7 +61,7 @@ export default function Main() {
 
   useEffect(() => {
     // Fetch tags from the backend API when the component mounts
-    axios.get('http://localhost:8000/tags')
+    axios.get(`${backend_url}/tags`)
       .then((response) => {
         const tags = response.data.map((obj) => obj.name);
         setAvailableTags(tags);
@@ -73,7 +73,7 @@ export default function Main() {
 
   useEffect(() => {
     // Fetch tags from the backend API when the component mounts
-    axios.get('http://localhost:8000/moods')
+    axios.get(`${backend_url}/moods`)
       .then((response) => {
         const moods = response.data.map((obj) => obj.name);
         setAvailableMoods(moods);

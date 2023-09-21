@@ -5,7 +5,11 @@
   "type": "commonjs",
   "license": "MIT",
   "scripts": {
-    "start": "node app.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "body-parser": "^1.20.2",
