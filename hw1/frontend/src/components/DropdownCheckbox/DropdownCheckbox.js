@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import './DropdownCheckbox.css'
+import React, { useState } from "react";
+import "./DropdownCheckbox.css";
 
-export default function DropdownCheckbox({ availableTags, availableMoods, onFilterChange }) {
+export default function DropdownCheckbox({
+  availableTags,
+  availableMoods,
+  onFilterChange,
+}) {
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedMoods, setSelectedMoods] = useState([]);
-  const [relationship, setRelationship] = useState('AND'); // Default to AND
+  const [relationship, setRelationship] = useState("AND"); // Default to AND
   const [isDropdownOpen, setDropdownOpen] = useState(false); // Default to AND
 
   const handleTagChange = (tag) => {
@@ -29,7 +33,6 @@ export default function DropdownCheckbox({ availableTags, availableMoods, onFilt
     onFilterChange(selectedTags, updatedMoods, relationship); // Notify the parent component of filter changes
   };
 
-
   const handleRelationshipChange = (e) => {
     setRelationship(e.target.value);
     onFilterChange(selectedTags, selectedMoods, e.target.value); // Notify the parent component of filter changes
@@ -42,10 +45,10 @@ export default function DropdownCheckbox({ availableTags, availableMoods, onFilt
   return (
     <div className="dropdown">
       <div onClick={handleDropdownToggle} className="drop-button">
-          Tags
+        Tags
       </div>
-      <div className={`dropdown-menu${isDropdownOpen ? '-open' : ''}`}>
-        <div className='tags'>
+      <div className={`dropdown-menu${isDropdownOpen ? "-open" : ""}`}>
+        <div className="tags">
           {availableTags.map((tag) => (
             <label key={tag} className="checkbox-label">
               <input
@@ -58,7 +61,7 @@ export default function DropdownCheckbox({ availableTags, availableMoods, onFilt
             </label>
           ))}
         </div>
-        <div className='moods'>
+        <div className="moods">
           {availableMoods.map((mood) => (
             <label key={mood} className="checkbox-label">
               <input
@@ -71,8 +74,12 @@ export default function DropdownCheckbox({ availableTags, availableMoods, onFilt
             </label>
           ))}
         </div>
-        <div className='relationship'>
-          <select id="selectOption" value={relationship} onChange={handleRelationshipChange}>
+        <div className="relationship">
+          <select
+            id="selectOption"
+            value={relationship}
+            onChange={handleRelationshipChange}
+          >
             <option value="AND">And</option>
             <option value="OR">Or</option>
           </select>
