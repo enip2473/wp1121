@@ -5,8 +5,8 @@
   "type": "commonjs",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js",
+    "dev": "nodemon app.js",
+    "start": "node app.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write ."

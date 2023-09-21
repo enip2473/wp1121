@@ -31,7 +31,7 @@ yarn start
 
 - 點擊右上角 New，新增一個 Diary
 - 可輸入 Title、Content、Tag、Mood 等
-- 其中 Tag 與 Mood 使用已存在於其他篇的作為候選清單，也可以自己新增。
+- 其中 Tag 與 Mood 使用已存在於其他篇的作為候選清單，也可以自己新增。輸入 / 清單選取想要的 tag 以後按下 Add tag/mood 就能新增。
 - 按下 Save 可儲存並回到首頁。
 - 首頁左上角可以 Tag 與 Mood，filter 出想要的 Diary，也能設定各篩選條件之間要以 and 還是 or 方式。
 - 在首頁圖卡點擊任一 Diary 可進入檢視介面。

@@ -6,6 +6,8 @@ const dotenv = require("dotenv");
 const postsRoute = require("./routes/posts"); // Import the posts routes
 const tagRoute = require("./routes/tags");
 const moodRoute = require("./routes/moods");
+const Tag = require("./models/tag");
+const Mood = require("./models/mood");
 
 // Require the file upload router
 dotenv.config();
@@ -23,10 +25,29 @@ db.once("open", () => {
   console.log("Connected to MongoDB");
 });
 
+const defaulttags = async () => {
+  let tags = ["學業", "人際", "社團"];
+  let moods = ["快樂", "生氣", "難過"];
+  for (const tag of tags) {
+    const existingTag = await Tag.findOne({ name: tag });
+    if (!existingTag) {
+      const newTag = new Tag({ name: tag });
+      await newTag.save();
+    }
+  }
+  for (const mood of moods) {
+    const existingMood = await Mood.findOne({ name: mood });
+    if (!existingMood) {
+      const newMood = new Mood({ name: mood });
+      await newMood.save();
+    }
+  }
+}
+defaulttags();
+
 // Middleware
 app.use(bodyParser.json());
 
-// Routes
 app.use("/posts", postsRoute);
 app.use("/tags", tagRoute);
 app.use("/moods", moodRoute);
