@@ -24,6 +24,7 @@ const updateTagAndMood = async (post) => {
 router.post('/', async (req, res) => {
   try {
     const post = new Post(req.body);
+    console.log(post.photo);
     updateTagAndMood(post);
     post.lastModified = new Date();
     const savedPost = await post.save();

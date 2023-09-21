@@ -71,8 +71,7 @@ export default function Editpost() {
   };
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
-      
+    const { name, value } = event.target; 
     setPost({
       ...post,
       [name]: value,
@@ -125,41 +124,29 @@ export default function Editpost() {
     })
   };
 
+  const convertImageToBase64 = (imageFile, callback) => {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      console.log(event.target.result)
+      const base64String = event.target.result;// Get the Base64 data part
+      callback(base64String);
+    };
+    reader.readAsDataURL(imageFile);
+  }
 
   const handleFileUpload = (event) => {
     const selectedFile = event.target.files[0]; // Get the first selected file
     if (selectedFile) {
       setSelectedFile(selectedFile);
     }
-  };
-
-  // Function to upload a photo and get its path and name as a response
-  const uploadPhotoAndGetInfo = (file) => {
-    return new Promise((resolve, reject) => {
-      if (!file) {
-        return reject('No file selected');
-      }
-
-      const formData = new FormData();
-      formData.append('photo', file); // Use 'photo' or the field name your server expects
-
-      // Send a POST request to upload the photo
-      axios.post(`${backend_url}/photos/upload`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then((response) => {
-          const
-           { photo } = response.data;
-          resolve({ photo });
-        })
-        .catch((error) => {
-          reject(error);
-        });
+    convertImageToBase64(selectedFile, function (base64String) {
+      console.log(base64String)
+      setPost({
+        ...post,
+        photo: base64String
+      })
     });
   };
-
 
   const postToBackend = (post) => {
     if (id) {
@@ -186,17 +173,7 @@ export default function Editpost() {
       alert("Title and Content are required.")
       return;
     }
-    if (selectedFile) {
-      uploadPhotoAndGetInfo(selectedFile)
-        .then((response) => {
-          post.photo = response.photo;
-        })
-        .then(() => {
-          postToBackend(post);
-        })
-    } else {
-      postToBackend(post);
-    }
+    postToBackend(post);
   };
 
   const handleCancelClick = () => {
