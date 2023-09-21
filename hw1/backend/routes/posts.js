@@ -1,8 +1,8 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Post = require('../models/post');
-const Tag = require('../models/tag');
-const Mood = require('../models/mood');
+const Post = require("../models/post");
+const Tag = require("../models/tag");
+const Mood = require("../models/mood");
 
 const updateTagAndMood = async (post) => {
   for (const tag of post.tags) {
@@ -19,9 +19,9 @@ const updateTagAndMood = async (post) => {
       await newMood.save();
     }
   }
-}
+};
 // Create a new post
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const post = new Post(req.body);
     updateTagAndMood(post);
@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
 });
 
 // Get all posts
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const posts = await Post.find();
     res.json(posts);
@@ -44,24 +44,24 @@ router.get('/', async (req, res) => {
 });
 
 // Get a post by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      return res.status(404).json({ message: "Post not found" });
     }
     res.json(post);
   } catch (error) {
-    if (error.name === 'CastError' && error.kind === 'ObjectId') {
-      return res.status(404).json({ message: 'Post not found' });
+    if (error.name === "CastError" && error.kind === "ObjectId") {
+      return res.status(404).json({ message: "Post not found" });
     }
-  
+
     res.status(500).json({ error: error.message });
   }
 });
 
 // Update a post by ID
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const post = req.body;
     updateTagAndMood(post);
@@ -71,28 +71,28 @@ router.put('/:id', async (req, res) => {
       new: true,
     });
     if (!updatedPost) {
-      return res.status(404).json({ message: 'Post not found' });
+      return res.status(404).json({ message: "Post not found" });
     }
     res.json(updatedPost);
   } catch (error) {
-    if (error.name === 'CastError' && error.kind === 'ObjectId') {
-      return res.status(404).json({ message: 'Post not found' });
+    if (error.name === "CastError" && error.kind === "ObjectId") {
+      return res.status(404).json({ message: "Post not found" });
     }
     res.status(500).json({ error: error.message });
   }
 });
 
 // Delete a post by ID
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const deletedPost = await Post.findByIdAndRemove(req.params.id);
     if (!deletedPost) {
-      return res.status(404).json({ message: 'Post not found' });
+      return res.status(404).json({ message: "Post not found" });
     }
     res.json(deletedPost);
   } catch (error) {
-    if (error.name === 'CastError' && error.kind === 'ObjectId') {
-      return res.status(404).json({ message: 'Post not found' });
+    if (error.name === "CastError" && error.kind === "ObjectId") {
+      return res.status(404).json({ message: "Post not found" });
     }
     res.status(500).json({ error: error.message });
   }
