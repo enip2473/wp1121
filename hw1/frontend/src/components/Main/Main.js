@@ -28,12 +28,10 @@ export default function Main() {
           moods.every((mood) => post.moods.includes(mood)),
       );
     } else if (relationship === "OR") {
-      filteredPosts = allPosts.filter(
-        (post) =>
-          (tags.length === 0 || tags.some((tag) => post.tags.includes(tag))) &&
-          (moods.length === 0 ||
-            moods.some((mood) => post.moods.includes(mood))),
-      );
+      filteredPosts = allPosts.filter( (post) => {
+        if (tags.length === 0 && moods.length === 0) return true;
+        return tags.some((tag) => post.tags.includes(tag)) || moods.some((mood) => post.moods.includes(mood));
+      });
     }
     setPosts(filteredPosts);
   };

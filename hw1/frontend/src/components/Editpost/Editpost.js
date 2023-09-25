@@ -130,7 +130,6 @@ export default function Editpost() {
   const convertImageToBase64 = (imageFile, callback) => {
     const reader = new FileReader();
     reader.onload = function (event) {
-      console.log(event.target.result);
       const base64String = event.target.result; // Get the Base64 data part
       callback(base64String);
     };
@@ -143,7 +142,6 @@ export default function Editpost() {
       setSelectedFile(selectedFile);
     }
     convertImageToBase64(selectedFile, function (base64String) {
-      console.log(base64String);
       setPost({
         ...post,
         photo: base64String,

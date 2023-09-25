@@ -46,8 +46,7 @@ const defaulttags = async () => {
 defaulttags();
 
 // Middleware
-app.use(bodyParser.json());
-
+app.use(bodyParser.json({limit: '50mb'}));
 app.use("/posts", postsRoute);
 app.use("/tags", tagRoute);
 app.use("/moods", moodRoute);

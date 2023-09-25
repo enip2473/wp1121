@@ -80,8 +80,8 @@ export default function DropdownCheckbox({
             value={relationship}
             onChange={handleRelationshipChange}
           >
-            <option value="AND">And</option>
-            <option value="OR">Or</option>
+            <option value="AND">AND</option>
+            <option value="OR">OR</option>
           </select>
         </div>
       </div>
