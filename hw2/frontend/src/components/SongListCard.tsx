@@ -2,7 +2,7 @@ import { Box, Card, CardContent, Typography, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import "./SongListCard.css"
-import { ReceivedPlaylist } from '@lib/shared_types';
+import type { ReceivedPlaylist } from '@lib/shared_types';
 
 type SongListCardProps = {
   list: ReceivedPlaylist;  // Assuming ListType is a type you've defined elsewhere or you can replace it with the appropriate type
@@ -10,7 +10,7 @@ type SongListCardProps = {
   handleDelete: (id: string) => Promise<void>;  // Assuming handleDelete takes a listId as a string. Adjust if different.
 };
 
-const SongListCard: React.FC<SongListCardProps> = ({ list, isDeleteMode, handleDelete }) => {
+const SongListCard = ({ list, isDeleteMode, handleDelete }: SongListCardProps) => {
   return (
     <Card style={{ position: 'relative' }} className={isDeleteMode ? "shake-animation" : ""}>
 

@@ -5,7 +5,8 @@ import Container from '@mui/material/Container';
 import PlaylistHeader from './PlaylistHeader';
 import PlaylistButton from './PlaylistButton';
 import Songs from './Songs';
-import {Song, ReceivedSong, ReceivedPlaylist, CreateSong} from '@lib/shared_types'
+import type {Song, ReceivedSong, ReceivedPlaylist, CreateSong} from '@lib/shared_types'
+import type { GridRowSelectionModel } from '@mui/x-data-grid';
 
 const PlaylistDetails = () => {
   const { id } = useParams<string>();
@@ -18,7 +19,7 @@ const PlaylistDetails = () => {
 
   const handleNewSong = async (song: CreateSong) => {
     let sameSong = false;
-    for (let oldSong of playlist.songs) {
+    for (const oldSong of playlist.songs) {
       if (oldSong.title === song.title) {
         sameSong = true;
         alert('A song with same title exists!')
@@ -44,7 +45,7 @@ const PlaylistDetails = () => {
     }
   };
 
-  const handleDelete = (selectedSongs: string[]) => {
+  const handleDelete = (selectedSongs: GridRowSelectionModel) => {
     if (selectedRows.length === 0) {
       alert('Select the songs you want to delete!');
       return
@@ -84,7 +85,7 @@ const PlaylistDetails = () => {
   }, [id]);
 
   const [rows, setRows] = useState<Song[]>([]);
-  const [selectedRows, setselectedRows] = useState<any>([]);
+  const [selectedRows, setselectedRows] = useState<GridRowSelectionModel>([]);
   useEffect(() => {
     axiosInstance.get(`lists/${id}/songs`)
       .then(response => {

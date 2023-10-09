@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Grid } from '@mui/material';
 import axiosInstance from './AxiosConfig'
 import SongListCard from './SongListCard'; // Adjust the import path
-import { ReceivedPlaylist } from '@lib/shared_types';
+import type { ReceivedPlaylist } from '@lib/shared_types';
 
 type SongListsProps = {
   isDeleteMode: boolean;

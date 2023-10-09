@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import ListModel, { IList } from '../models/list'; 
+import type { Request, Response } from 'express';
+import ListModel, { type IList } from '../models/list'; 
 
 export const createList = async (req: Request, res: Response) => {
     try {
@@ -12,7 +12,7 @@ export const createList = async (req: Request, res: Response) => {
             await list.save();
             res.status(201).send(list);
         }
-    } catch (error: any) {
+    } catch (error) {
         res.status(400).send(error);
     }
 };
@@ -21,7 +21,7 @@ export const getAllLists = async (_req: Request, res: Response) => {
     try {
         const lists = await ListModel.find({}); // You can populate the songs if needed
         res.status(200).send(lists);
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).send(error);
     }
 };
@@ -34,7 +34,7 @@ export const getListById = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).send(list);
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).send(error);
     }
 };
@@ -47,7 +47,7 @@ export const updateListById = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).send(list);
-    } catch (error: any) {
+    } catch (error) {
         res.status(400).send(error);
     }
 };
@@ -60,7 +60,7 @@ export const deleteListById = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).send(list);
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).send(error);
     }
 };
@@ -108,7 +108,7 @@ export const deleteSongsFromList = async (req: Request, res: Response) => {
     list.songs = list.songs.filter((songId) => !songIds.includes(songId.toString()));
     await list.save();
     res.json({ success: true, list });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting songs from list:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }

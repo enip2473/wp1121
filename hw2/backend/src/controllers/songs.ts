@@ -1,12 +1,12 @@
-import { Request, Response } from 'express';
-import SongModel, { ISong } from '../models/song'; // Adjust the path if necessary
+import type { Request, Response } from 'express';
+import { SongModel, type ISong } from '../models/song'; // Adjust the path if necessary
 
 export const createSong = async (req: Request, res: Response) => {
     try {
         const song: ISong = new SongModel(req.body);
         await song.save();
         res.status(201).send(song);
-    } catch (error: any) {
+    } catch (error) {
         res.status(400).send(error);
     }
 };
@@ -15,7 +15,7 @@ export const getAllSongs = async (_req: Request, res: Response) => {
     try {
         const songs = await SongModel.find({});
         res.status(200).send(songs);
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).send(error);
     }
 };
@@ -28,7 +28,7 @@ export const getSongById = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).send(song);
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).send(error);
     }
 };
@@ -43,7 +43,7 @@ export const updateSongById = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).send(song);
-    } catch (error: any) {
+    } catch (error) {
         res.status(400).send(error);
     }
 };
@@ -56,7 +56,7 @@ export const deleteSongById = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).send(song);
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).send(error);
     }
 };

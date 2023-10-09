@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Select, MenuItem } from '@mui/material';
 import axiosInstance from './AxiosConfig'
-import { CreateSong, ReceivedPlaylist } from '@lib/shared_types';
+import type { CreateSong, ReceivedPlaylist } from '@lib/shared_types';
+import type { GridRowSelectionModel } from '@mui/x-data-grid';
+import PropTypes from 'prop-types';
 
-interface Props {
+type Props = {
     listId: string | undefined;
     onNewSong: (song: CreateSong) => void;
     onDelete: () => void;
-    selectedRows: string[];
+    selectedRows: GridRowSelectionModel;
 }
 
-const PlaylistButton: React.FC<Props> = ({ listId, onNewSong, onDelete, selectedRows }) => {
+const PlaylistButton = ({ listId, onNewSong, onDelete, selectedRows }: Props) => {
     const [open, setOpen] = useState(false);
     const [openExport, setOpenExport] = useState(false);
     const [selectedPlaylist, setSelectedPlaylist] = useState("");
@@ -32,7 +34,7 @@ const PlaylistButton: React.FC<Props> = ({ listId, onNewSong, onDelete, selected
             .catch(error => {
                 console.error('Error fetching playlists:', error);
             });
-    }, []);
+    }, [listId]);
 
     const handleOpen = () => {
         setOpen(true);
@@ -149,5 +151,13 @@ const PlaylistButton: React.FC<Props> = ({ listId, onNewSong, onDelete, selected
         </div>
     );
 };
+
+PlaylistButton.propTypes = {
+    listId: PropTypes.string,
+    onNewSong: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
+    selectedRows: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+  
 
 export default PlaylistButton;

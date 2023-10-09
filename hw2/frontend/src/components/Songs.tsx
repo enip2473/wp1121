@@ -1,14 +1,11 @@
-import { DataGrid, GridRowModel, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, type GridRowModel, type GridRowSelectionModel, type GridRenderCellParams } from '@mui/x-data-grid';
 import axiosInstance from './AxiosConfig'
-import { Song } from '@lib/shared_types';
-
-const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-  console.log(newRow, oldRow);
+import type { Song } from '@lib/shared_types';
+const processRowUpdate = (newRow: GridRowModel, _: GridRowModel) => {
   return new Promise((resolve, reject) => {
     const { id, ...updateData } = newRow;
-    axiosInstance.put(`/songs/${newRow.id}`, updateData)
+    axiosInstance.put(`/songs/${id}`, updateData)
     .then(response => {
-      console.log(response)
       if (response.status !== 200) {
         console.error('Error updating song in backend:');
       }
@@ -22,7 +19,7 @@ const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
 }
 
 const handleProcessRowUpdateError = () => {
-  console.log("error");
+  console.error("Error in row update");
 }
 
 const isValidURL = (str: string) => {
@@ -44,7 +41,7 @@ const columns = [
     headerName: 'Link', 
     flex: 3, 
     editable: true,
-    renderCell: (params: any) => {
+    renderCell: (params: GridRenderCellParams<GridRowModel, string>) => {
       if (typeof params.value === 'string' && isValidURL(params.value)) {
         return (
           <a href={params.value} target="_blank" rel="noopener noreferrer">
@@ -59,7 +56,7 @@ const columns = [
 
 type MyDataGridProps = {
   rows: Song[];
-  selectedRows: string[]; 
+  selectedRows: GridRowSelectionModel; 
   setSelectedRows: (selected: GridRowSelectionModel) => void;
 };
 

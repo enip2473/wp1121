@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, type Document, type Model } from 'mongoose';
 
 export interface ISong extends Document {
     title: string;
@@ -21,6 +21,4 @@ const songSchema: Schema = new Schema({
     }
 });
 
-const SongModel: Model<ISong> = mongoose.model<ISong>('Song', songSchema);
-
-export default SongModel;
+export const SongModel: Model<ISong> = mongoose.model<ISong>('Song', songSchema);

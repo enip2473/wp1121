@@ -1,5 +1,5 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
-import { ISong } from './song'; // Ensure the path is correct based on your project structure
+import mongoose, { Schema, type Document, type Model } from 'mongoose';
+import type { ISong } from './song'; // Ensure the path is correct based on your project structure
 
 export interface IList extends Document {
     name: string;

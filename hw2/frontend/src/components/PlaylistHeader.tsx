@@ -2,20 +2,26 @@ import { useState } from 'react';
 import { Box, Typography, Button, TextField } from '@mui/material';
 import axiosInstance from './AxiosConfig'
 import { Edit as EditIcon } from '@mui/icons-material';
-import { ReceivedPlaylist } from '@lib/shared_types'
+import type { ReceivedPlaylist } from '@lib/shared_types'
 
 type PlaylistHeaderProps = {
   playlist: ReceivedPlaylist;
   setPlaylist: (playlist: ReceivedPlaylist) => void;
 };
 
-const PlaylistHeader: React.FC<PlaylistHeaderProps> = ({ playlist, setPlaylist }) => {
+const PlaylistHeader = ({ playlist, setPlaylist }: PlaylistHeaderProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(playlist.name);
   const [editedDescription, setEditedDescription] = useState(playlist.description);
 
   const handleEditClick = () => {
     setIsEditing(true);
+  };
+
+  const handleCancelClick = () => {
+    setEditedName(playlist.name);
+    setEditedDescription(playlist.description);
+    setIsEditing(false);
   };
 
   const handleSaveClick = async () => {
@@ -62,9 +68,14 @@ const PlaylistHeader: React.FC<PlaylistHeaderProps> = ({ playlist, setPlaylist }
               multiline
               label="Playlist Description"
             />
-            <Button color="primary" onClick={handleSaveClick}>
-              Save
-            </Button>
+            <Box display="flex" justifyContent="space-between" mt={2}>
+              <Button color="primary" onClick={handleSaveClick}>
+                Save
+              </Button>
+              <Button color="secondary" onClick={handleCancelClick}>
+                Cancel
+              </Button>
+            </Box>
           </>
         ) : (
           <>
