@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import HeaderBar from "@/components/HeaderBar";
 import Main from "@/components/Main";
 import Playlist from "@/components/Playlist";
-import HeaderBar from "@/components/HeaderBar";
 
 export default function allRoutes() {
   return (

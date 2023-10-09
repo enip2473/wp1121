@@ -1,22 +1,26 @@
 // import MenuIcon from "@mui/icons-material/Menu";
+import { useNavigate } from "react-router-dom";
+
 import AppBar from "@mui/material/AppBar";
 // import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { useNavigate } from 'react-router-dom';
 
 export default function HeaderBar() {
   const navigate = useNavigate();
 
   const handleNavigation = () => {
-    navigate('/');
+    navigate("/");
   };
 
   return (
-    <AppBar position="static" onClick={handleNavigation} sx={{
-        cursor: 'pointer',
-        '&:hover': {
-          backgroundColor: '#555',  // Darken the color on hover
+    <AppBar
+      position="static"
+      onClick={handleNavigation}
+      sx={{
+        cursor: "pointer",
+        "&:hover": {
+          backgroundColor: "#555", // Darken the color on hover
         },
       }}
     >

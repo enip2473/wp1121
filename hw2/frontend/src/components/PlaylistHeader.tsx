@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { Box, Typography, Button, TextField } from '@mui/material';
-import axiosInstance from './AxiosConfig'
-import { Edit as EditIcon } from '@mui/icons-material';
-import type { ReceivedPlaylist } from '@lib/shared_types'
+import { useState } from "react";
+
+import type { ReceivedPlaylist } from "@lib/shared_types";
+import { Edit as EditIcon } from "@mui/icons-material";
+import { Box, Typography, Button, TextField } from "@mui/material";
+
+import axiosInstance from "./AxiosConfig";
 
 type PlaylistHeaderProps = {
   playlist: ReceivedPlaylist;
@@ -12,7 +14,9 @@ type PlaylistHeaderProps = {
 const PlaylistHeader = ({ playlist, setPlaylist }: PlaylistHeaderProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(playlist.name);
-  const [editedDescription, setEditedDescription] = useState(playlist.description);
+  const [editedDescription, setEditedDescription] = useState(
+    playlist.description,
+  );
 
   const handleEditClick = () => {
     setEditedName(playlist.name);
@@ -37,7 +41,10 @@ const PlaylistHeader = ({ playlist, setPlaylist }: PlaylistHeaderProps) => {
       description: editedDescription,
     };
     try {
-      const response = await axiosInstance.put(`/lists/${playlist._id}`, updatedPlaylist);
+      const response = await axiosInstance.put(
+        `/lists/${playlist._id}`,
+        updatedPlaylist,
+      );
       setPlaylist(response.data);
       setIsEditing(false);
     } catch (error) {
@@ -87,22 +94,21 @@ const PlaylistHeader = ({ playlist, setPlaylist }: PlaylistHeaderProps) => {
           <>
             <Typography variant="h4">{playlist.name}</Typography>
             <Typography variant="body1">{playlist.description}</Typography>
-            <Button 
-              startIcon={<EditIcon />} 
-              variant="contained" 
+            <Button
+              startIcon={<EditIcon />}
+              variant="contained"
               color="primary"
               sx={{
-                padding: '8px 16px', 
-                '&:hover': {
-                  backgroundColor: '#4a90e2', // Darker shade for hover
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)', 
-                }
+                padding: "8px 16px",
+                "&:hover": {
+                  backgroundColor: "#4a90e2", // Darker shade for hover
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                },
               }}
               onClick={handleEditClick}
             >
               Edit
             </Button>
-
           </>
         )}
       </Box>
