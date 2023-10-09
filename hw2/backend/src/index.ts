@@ -3,8 +3,8 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 
-import SongRoutes from "./routes/songs";
 import ListRoutes from "./routes/lists";
+import SongRoutes from "./routes/songs";
 // We use a custom env.ts file to make sure that all the environment variables are in correct types.
 import { env } from "./utils/env";
 
