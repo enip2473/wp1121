@@ -26,7 +26,7 @@ function SongLists({isDeleteMode, searchTerm}: SongListsProps) {
   useEffect(() => {
     async function fetchSongLists() {
       try {
-        const response = await axiosInstance.get('/lists');  // Adjust the endpoint if necessary
+        const response = await axiosInstance.get('/lists');
         setSongLists(response.data);
       } catch (error) {
         console.error("Error fetching song lists:", error);

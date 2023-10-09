@@ -7,7 +7,6 @@ interface AddPlaylistProps {
     onClose: () => void;
 }
 
-
 export default function AddPlaylistDialog({ open, onClose }: AddPlaylistProps) {
     const [playlistName, setPlaylistName] = useState('');
     const [playlistDescription, setPlaylistDescription] = useState('');

@@ -35,8 +35,6 @@ export const getSongById = async (req: Request, res: Response) => {
 
 export const updateSongById = async (req: Request, res: Response) => {
     try {
-        console.log(req.params.id);
-        console.log(req.params.body);
         const song = await SongModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!song) {
             res.status(404).send("Song not found");

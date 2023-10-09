@@ -15,6 +15,8 @@ const PlaylistHeader = ({ playlist, setPlaylist }: PlaylistHeaderProps) => {
   const [editedDescription, setEditedDescription] = useState(playlist.description);
 
   const handleEditClick = () => {
+    setEditedName(playlist.name);
+    setEditedDescription(playlist.description);
     setIsEditing(true);
   };
 
@@ -25,17 +27,21 @@ const PlaylistHeader = ({ playlist, setPlaylist }: PlaylistHeaderProps) => {
   };
 
   const handleSaveClick = async () => {
+    if (!editedName || !editedDescription) {
+      alert("Please enter name and description!");
+      return;
+    }
     const updatedPlaylist = {
       ...playlist,
       name: editedName,
       description: editedDescription,
     };
-
     try {
       const response = await axiosInstance.put(`/lists/${playlist._id}`, updatedPlaylist);
       setPlaylist(response.data);
       setIsEditing(false);
     } catch (error) {
+      alert("Playlist with same name exists!");
       console.error("Failed to update playlist:", error);
     }
   };

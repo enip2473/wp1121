@@ -53,7 +53,6 @@ const PlaylistDetails = () => {
     // Filtering out the selected songs
     const userConfirmed = window.confirm("Are you sure you want to delete the selected songs?");
     if (!userConfirmed) return;
-    // Using DELETE method for the request
     axiosInstance.delete(`/lists/${id}/songs`, { data: { songIds: selectedSongs } })
     .then(response => {
       if (!response.data.success) {

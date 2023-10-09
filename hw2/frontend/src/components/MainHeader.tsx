@@ -10,7 +10,6 @@ type MainHeaderProps = {
     setSearchTerm: (term: string) => void;
 };
 
-
 function MainHeader({ isDeleteMode, setIsDeleteMode, searchTerm, setSearchTerm }: MainHeaderProps) {
     const [isDialogOpen, setDialogOpen] = useState(false);
     return (

@@ -5,7 +5,7 @@ import { useState } from "react"
 
 export default function Main() {
     const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState<string>('');
     return (
         <Container maxWidth="lg">
             <MainHeader 

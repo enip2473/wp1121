@@ -19,7 +19,7 @@ export const createList = async (req: Request, res: Response) => {
 
 export const getAllLists = async (_req: Request, res: Response) => {
     try {
-        const lists = await ListModel.find({}); // You can populate the songs if needed
+        const lists = await ListModel.find({});
         res.status(200).send(lists);
     } catch (error) {
         res.status(500).send(error);
@@ -41,6 +41,11 @@ export const getListById = async (req: Request, res: Response) => {
 
 export const updateListById = async (req: Request, res: Response) => {
     try {
+        const existingList = await ListModel.findOne({ name: req.body.name });
+        if (existingList && existingList._id.toString() !== req.body._id) {
+            res.status(409).send("A list with same name exists!");
+            return;
+        }
         const list = await ListModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!list) {
             res.status(404).send("List not found");
