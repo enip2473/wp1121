@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button, Card, CardContent, Typography, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import axiosInstance from './AxiosConfig'
-import { Link } from 'react-router-dom';
+import SongListCard from './SongListCard'; // Adjust the import path
 
 type SongList = {
     _id: string;            // MongoDB's ObjectID
@@ -15,7 +15,6 @@ const handleDelete = async (id: string, setSongLists: any) => {
   try {
       const response = await axiosInstance.delete(`/lists/${id}`);
       if (response.status === 200) {
-          // Either refetch the song lists or remove the deleted one from the state
           setSongLists((prevLists: any) => prevLists.filter((list: any) => list._id !== id));
       } else {
           console.error('Failed to delete the playlist.');
@@ -25,10 +24,9 @@ const handleDelete = async (id: string, setSongLists: any) => {
   }
 };
 
-function SongLists({isDeleteMode}: any) {
+function SongLists({isDeleteMode, searchTerm}: any) {
   const [songLists, setSongLists] = useState<SongList[]>([]);
   useEffect(() => {
-    // Fetch the song lists using axios
     async function fetchSongLists() {
       try {
         const response = await axiosInstance.get('/lists');  // Adjust the endpoint if necessary
@@ -38,30 +36,16 @@ function SongLists({isDeleteMode}: any) {
       }
     }
     fetchSongLists();
-  }, []);  // The empty dependency array means this useEffect runs once when the component mounts
+  }, []);
+  const filteredList = songLists.filter(
+    list => list.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   return (
     <Grid container spacing={3}>
-      {songLists.map((list) => (
-        <Grid item key={list._id} xs={12} sm={6} md={4}>
-          <Card style={{ position: 'relative' }}>
-            <Link to={`/playlist/${list._id}`} style={{ textDecoration: 'none' }}>
-              <CardContent>
-                {isDeleteMode && (
-                  <Button 
-                  style={{ position: 'absolute', top: 0, right: 0, color: 'red' }}
-                  onClick={() => handleDelete(list._id, setSongLists)}
-                  >
-                    X
-                  </Button>
-                )}
-                <Typography variant="h5" component="div">
-                  {list.name}
-                </Typography>
-                {/* You can add more details here like the number of songs in the list or even list the song names */}
-              </CardContent>
-            </Link>
-          </Card>
+      {filteredList.map((list) => (
+        <Grid item key={list._id} xs={6} sm={4} md={2}>
+          <SongListCard list={list} isDeleteMode={isDeleteMode} handleDelete={handleDelete} />
         </Grid>
       ))}
     </Grid>

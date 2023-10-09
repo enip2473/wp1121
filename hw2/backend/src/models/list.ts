@@ -3,6 +3,7 @@ import { ISong } from './song'; // Ensure the path is correct based on your proj
 
 export interface IList extends Document {
     name: string;
+    description: string;
     songs: ISong['_id'][];
     numberOfSongs: number;
 }
@@ -11,6 +12,9 @@ const listSchema: Schema = new Schema({
     name: {
         type: String,
         required: true
+    },
+    description: {
+        type: String,
     },
     songs: [{
         type: Schema.Types.ObjectId,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axiosInstance from './AxiosConfig'
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from "@mui/material";
+import { Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from "@mui/material";
 
 interface AddPlaylistProps {
     open: boolean;
@@ -9,26 +9,24 @@ interface AddPlaylistProps {
 
 
 export default function AddPlaylistDialog({ open, onClose }: AddPlaylistProps) {
-    const [playlistTitle, setPlaylistTitle] = useState('');
+    const [playlistName, setPlaylistName] = useState('');
+    const [playlistDescription, setPlaylistDescription] = useState('');
 
     const handleSave = async () => {
-        if (playlistTitle) {
+        if (playlistName && playlistDescription) {
             try {
-                const response = await axiosInstance.post('/lists', { name: playlistTitle });
-
-                if (response.status === 200 || response.status === 201) {
-                    // Close the dialog and reset the playlist title
+                const response = await axiosInstance.post('/lists', { name: playlistName, description: playlistDescription });
+                if (response.status === 201) {
                     onClose();
-                    setPlaylistTitle('');
+                    setPlaylistName('');
+                    setPlaylistDescription('');
                     window.location.reload();
-                } else {
-                    console.error('Failed to save the playlist.');
                 }
             } catch (error) {
-                console.error('There was an error saving the playlist:', error);
+                alert('A list with same name already exists!');
             }
         } else {
-            alert('Playlist title cannot be empty!');
+            alert('Playlist name and escription cannot be empty!');
         }
     };
 
@@ -36,17 +34,23 @@ export default function AddPlaylistDialog({ open, onClose }: AddPlaylistProps) {
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Add a new playlist</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    Enter the title for your new playlist.
-                </DialogContentText>
                 <TextField
                     autoFocus
                     margin="dense"
-                    label="Playlist Title"
+                    label="Playlist Name"
                     type="text"
                     fullWidth
-                    value={playlistTitle}
-                    onChange={(e) => setPlaylistTitle(e.target.value)}
+                    value={playlistName}
+                    onChange={(e) => setPlaylistName(e.target.value)}
+                />
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    label="Playlist Description"
+                    type="text"
+                    fullWidth
+                    value={playlistDescription}
+                    onChange={(e) => setPlaylistDescription(e.target.value)}
                 />
             </DialogContent>
             <DialogActions>

@@ -1,24 +1,34 @@
+import express from "express";
 import {
   createList,
   getAllLists,
   getListById,
   updateListById,
   deleteListById,
+  songsOfList,
+  updateSongsOfList,
+  deleteSongsFromList  // Assuming you'll create this controller
 } from "../controllers/lists";
-import express from "express";
 
 const router = express.Router();
 
-// GET /api/lists
-router.get("/", getAllLists);
-// GET /api/lists/:id
-router.get("/:id", getListById);
-// POST /api/lists
-router.post("/", createList);
-// PUT /api/lists/:id
-router.put("/:id", updateListById);
-// DELETE /api/lists/:id
-router.delete("/:id", deleteListById);
+// CRUD operations for lists
+router
+  .route("/")
+  .get(getAllLists)
+  .post(createList);
 
-// export the router
+router
+  .route("/:id")
+  .get(getListById)
+  .put(updateListById)
+  .delete(deleteListById);
+
+// Operations related to songs of a list
+router
+  .route("/:id/songs")
+  .get(songsOfList)
+  .put(updateSongsOfList)
+  .delete(deleteSongsFromList);  // This is the new route for deleting songs from a list
+
 export default router;

@@ -3,9 +3,15 @@ import ListModel, { IList } from '../models/list';
 
 export const createList = async (req: Request, res: Response) => {
     try {
-        const list: IList = new ListModel(req.body);
-        await list.save();
-        res.status(201).send(list);
+        const existingList = await ListModel.findOne({ name: req.body.name });
+        if (existingList) {
+            res.status(409).send("A list with same name exists!");
+        }
+        else {
+            const list: IList = new ListModel(req.body);
+            await list.save();
+            res.status(201).send(list);
+        }
     } catch (error: any) {
         res.status(400).send(error);
     }
@@ -13,7 +19,7 @@ export const createList = async (req: Request, res: Response) => {
 
 export const getAllLists = async (_req: Request, res: Response) => {
     try {
-        const lists = await ListModel.find({}).populate('songs'); // You can populate the songs if needed
+        const lists = await ListModel.find({}); // You can populate the songs if needed
         res.status(200).send(lists);
     } catch (error: any) {
         res.status(500).send(error);
@@ -58,3 +64,54 @@ export const deleteListById = async (req: Request, res: Response) => {
         res.status(500).send(error);
     }
 };
+
+export const songsOfList = async (req: Request, res: Response) => {
+    try {
+        const list = await ListModel.findById(req.params.id).populate('songs');
+        if (!list) {
+            return res.status(404).json({ message: 'List not found' });
+        }
+        res.json(list.songs); // Returns all the songs associated with the list
+    } catch (error) {
+        console.error('Error fetching songs:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const updateSongsOfList = async (req: Request, res: Response) => {
+    try {
+        const { songIds } = req.body;
+        const list = await ListModel.findById(req.params.id);
+        if (!list) {
+            return res.status(404).json({ message: 'List not found' });
+        }
+        songIds.forEach((songId: string) => {
+            if (!list.songs.includes(songId)) {
+                list.songs.push(songId);
+            }
+        });
+        await list.save();
+        res.json({ success: true, list });
+    } catch (error) {
+        console.error('Error updating list:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  };
+
+export const deleteSongsFromList = async (req: Request, res: Response) => {
+  try {
+    const { songIds } = req.body;  // Expecting an array of song IDs to be removed
+    const list = await ListModel.findById(req.params.id);
+    if (!list) {
+        return res.status(404).json({ message: 'List not found' });
+    }
+    list.songs = list.songs.filter((songId) => !songIds.includes(songId.toString()));
+    await list.save();
+    res.json({ success: true, list });
+  } catch (error: any) {
+    console.error('Error deleting songs from list:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+  
+  

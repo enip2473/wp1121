@@ -1,34 +1,109 @@
 import { useParams } from 'react-router-dom';
-import axiosInstance from './AxiosConfig'; // Adjust the path as per your setup
 import { useEffect, useState } from 'react';
+import axiosInstance from './AxiosConfig'; // Adjust the path as per your setup
+import Container from '@mui/material/Container';
+import PlaylistHeader from './PlaylistHeader';
+import PlaylistButton from './PlaylistButton';
+import Songs from './Songs';
 
 const PlaylistDetails = () => {
-    const { id } = useParams();  // This hook gives us access to the route parameters
-    const [playlist, setPlaylist] = useState<any>(null);
+  const { id } = useParams();  // This hook gives us access to the route parameters
+  const [playlist, setPlaylist] = useState<any>(null);
 
-    useEffect(() => {
-        async function fetchPlaylistDetails() {
-            try {
-                const response = await axiosInstance.get(`/lists/${id}`);
-                setPlaylist(response.data);
-            } catch (error) {
-                console.error('Error fetching playlist details:', error);
-            }
-        }
-        fetchPlaylistDetails();
-    }, [id]);
+  const handleNewSong = async (song: any) => {
+    let sameSong = false;
+    for (let oldSong of playlist.songs) {
+      if (oldSong.title === song.title) {
+        sameSong = true;
+        alert('A song with same title exists!')
+      }
+    }   
+    if (sameSong) return; 
+    try {
+      const response = await axiosInstance.post('/songs', song);
+      const songId = response.data._id; 
+      const listResponse = await axiosInstance.put(`/lists/${id}/songs`, { songIds: [songId] })
+      if (!listResponse.data.success) {
+        console.error('Error updating list:', response.data.message);
+      }
+      setPlaylist(prev => {
+        return {
+          ...prev,
+          songs: [...prev.songs, {_id: songId, ...song}]
+        };
+      });
+    }
+    catch (error) {
+      console.error(error);
+    }
+  };
 
-    if (!playlist) return <div>Loading...</div>;
-    // TODO
-    return (
-        <>
-            <PlaylistHeader/>
-            <PlaylistButton/>
-            <Songs/>
-            <h2>{playlist.name}</h2>
-            {/* Display songs and other details of the playlist */}
-        </>
-    );
+  const handleDelete = (selectedSongs: any) => {
+    if (selectedRows.length === 0) {
+      alert('Select the songs you want to delete!');
+      return
+    }
+    // Filtering out the selected songs
+    const userConfirmed = window.confirm("Are you sure you want to delete the selected songs?");
+    if (!userConfirmed) return;
+    // Using DELETE method for the request
+    axiosInstance.delete(`/lists/${id}/songs`, { data: { songIds: selectedSongs } })
+    .then(response => {
+      if (!response.data.success) {
+        console.error('Error deleting songs from list:', response.data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error deleting songs from list:', error);
+    });
+
+    setPlaylist(prev => {
+      return {
+        ...prev,
+        songs: prev.songs.filter(song => !selectedSongs.includes(song._id))
+      };
+    });
+  };
+
+  useEffect(() => {
+    async function fetchPlaylistDetails() {
+      try {
+        const response = await axiosInstance.get(`/lists/${id}`);
+        setPlaylist(response.data);
+      } catch (error) {
+        console.error('Error fetching playlist details:', error);
+      }
+    }
+    fetchPlaylistDetails();
+  }, [id]);
+
+  const [rows, setRows] = useState([]);
+  const [selectedRows, setselectedRows] = useState([]);
+  useEffect(() => {
+    axiosInstance.get(`lists/${id}/songs`)
+      .then(response => {
+        const fetchedSongs = response.data.map(song => ({
+          id: song._id,
+          title: song.title,
+          author: song.author,
+          link: song.link
+        }));
+        setRows(fetchedSongs);
+      })
+      .catch(error => {
+          console.error('Error fetching songs:', error);
+      });
+  }, [id, playlist]);  
+
+
+  if (!playlist) return <div>Loading...</div>;
+  return (
+    <Container>
+      <PlaylistHeader playlist={playlist} setPlaylist={setPlaylist}/>
+      <PlaylistButton listId={id} onNewSong={handleNewSong} onDelete={() => handleDelete(selectedRows)} selectedRows={selectedRows}/>
+      <Songs rows={rows} selectedRows={selectedRows} setSelectedRows={setselectedRows}/>
+    </Container>
+  );
 };
 
 export default PlaylistDetails;
