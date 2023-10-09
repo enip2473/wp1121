@@ -9,8 +9,8 @@ export default function Main() {
     return (
         <Container maxWidth="lg">
             <MainHeader 
-                setIsDeleteMode={setIsDeleteMode} 
                 isDeleteMode={isDeleteMode}
+                setIsDeleteMode={setIsDeleteMode} 
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
             />

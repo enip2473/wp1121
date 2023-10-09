@@ -2,30 +2,27 @@ import { useState, useEffect } from 'react';
 import { Grid } from '@mui/material';
 import axiosInstance from './AxiosConfig'
 import SongListCard from './SongListCard'; // Adjust the import path
+import { ReceivedPlaylist } from '@lib/shared_types';
 
-type SongList = {
-    _id: string;            // MongoDB's ObjectID
-    name: string;
-    songs: string[];
-    numberOfSongs: number;
+type SongListsProps = {
+  isDeleteMode: boolean;
+  searchTerm: string;
 };
 
-
-const handleDelete = async (id: string, setSongLists: any) => {
-  try {
-      const response = await axiosInstance.delete(`/lists/${id}`);
-      if (response.status === 200) {
-          setSongLists((prevLists: any) => prevLists.filter((list: any) => list._id !== id));
-      } else {
-          console.error('Failed to delete the playlist.');
-      }
-  } catch (error) {
-      console.error('There was an error deleting the playlist:', error);
-  }
-};
-
-function SongLists({isDeleteMode, searchTerm}: any) {
-  const [songLists, setSongLists] = useState<SongList[]>([]);
+function SongLists({isDeleteMode, searchTerm}: SongListsProps) {
+  const [songLists, setSongLists] = useState<ReceivedPlaylist[]>([]);
+  const handleDelete: (id: string) => Promise<void> = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/lists/${id}`);
+        if (response.status === 200) {
+            setSongLists((prevLists: ReceivedPlaylist[]) => prevLists.filter((list: ReceivedPlaylist) => list._id !== id));
+        } else {
+            console.error('Failed to delete the playlist.');
+        }
+    } catch (error) {
+        console.error('There was an error deleting the playlist:', error);
+    }
+  };
   useEffect(() => {
     async function fetchSongLists() {
       try {

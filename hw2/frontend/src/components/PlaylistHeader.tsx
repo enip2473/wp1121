@@ -2,8 +2,14 @@ import { useState } from 'react';
 import { Box, Typography, Button, TextField } from '@mui/material';
 import axiosInstance from './AxiosConfig'
 import { Edit as EditIcon } from '@mui/icons-material';
+import { ReceivedPlaylist } from '@lib/shared_types'
 
-const PlaylistHeader = ({ playlist, setPlaylist }) => {
+type PlaylistHeaderProps = {
+  playlist: ReceivedPlaylist;
+  setPlaylist: (playlist: ReceivedPlaylist) => void;
+};
+
+const PlaylistHeader: React.FC<PlaylistHeaderProps> = ({ playlist, setPlaylist }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(playlist.name);
   const [editedDescription, setEditedDescription] = useState(playlist.description);

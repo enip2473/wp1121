@@ -3,7 +3,15 @@ import { TextField, Button, Box, Typography } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import AddPlaylist from './AddPlaylist';  // adjust the path if necessary
 
-function MainHeader({ setIsDeleteMode, isDeleteMode, searchTerm, setSearchTerm }: any) {
+type MainHeaderProps = {
+    isDeleteMode: boolean;
+    setIsDeleteMode: (mode: boolean) => void;
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
+};
+
+
+function MainHeader({ isDeleteMode, setIsDeleteMode, searchTerm, setSearchTerm }: MainHeaderProps) {
     const [isDialogOpen, setDialogOpen] = useState(false);
     return (
         <Box display="flex" justifyContent="space-between" alignItems="center" mt={2} mb={2}>
@@ -21,7 +29,7 @@ function MainHeader({ setIsDeleteMode, isDeleteMode, searchTerm, setSearchTerm }
                 <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)}>
                     Add
                 </Button>
-                <Button variant="contained" startIcon={<DeleteIcon />} onClick={() => setIsDeleteMode((prev: boolean) => (!prev))}>
+                <Button variant="contained" startIcon={<DeleteIcon />} onClick={() => setIsDeleteMode(!isDeleteMode)}>
                     {isDeleteMode ? "Cancel" : "Delete"}
                 </Button>
             </Box>

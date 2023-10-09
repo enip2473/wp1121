@@ -9,45 +9,51 @@
 // A general rule of thumb is to always use `type` unless you have a good reason
 // to use `interface`. `interface` is more powerful, at the cost of baring more
 // footguns.
-export type SongData = {
+export type Song = {
   id: string;
   title: string;
-  description: string;
+  author: string;
+  link: string;
 };
 
-export type ListData = {
+export type CreateSong = Omit<Song, "id">;
+export type ReceivedSong = Omit<Song, 'id'> & { _id: string };
+
+export type Playlist = {
   id: string;
   name: string;
-  songs: string[];
+  songs: ReceivedSong[];
   description: string
 };
 
-export type GetSongsResponse = SongData[];
+export type ReceivedPlaylist = Omit<Playlist, 'id'> & { _id: string };
 
-export type GetSongResponse = SongData;
 
-// Types can also be derived from other types using utility types. These are
-// a few examples of utility types:
-// for more information, see: https://www.typescriptlang.org/docs/handbook/utility-types.html
-// You don't need to memorize these, but it's good to know they exist.
-export type CreateSongPayload = Omit<SongData, "id">;
+// export type GetSongsResponse = SongData[];
 
-export type CreateSongResponse = Pick<SongData, "id">;
+// export type GetSongResponse = SongData;
 
-export type UpdateSongPayload = Partial<Omit<SongData, "id">>;
+// // Types can also be derived from other types using utility types. These are
+// // a few examples of utility types:
+// // for more information, see: https://www.typescriptlang.org/docs/handbook/utility-types.html
+// // You don't need to memorize these, but it's good to know they exist.
 
-export type UpdateSongResponse = "OK";
+// export type CreateSongResponse = Pick<SongData, "id">;
 
-export type DeleteSongResponse = "OK";
+// export type UpdateSongPayload = Partial<Omit<SongData, "id">>;
 
-export type GetListsResponse = Omit<ListData, "songs" | "description">[];
+// export type UpdateSongResponse = "OK";
 
-export type CreateListPayload = Omit<ListData, "id" | "songs">;
+// export type DeleteSongResponse = "OK";
 
-export type CreateListResponse = Pick<ListData, "id">;
+// export type GetListsResponse = Omit<ListData, "songs" | "description">[];
 
-export type UpdateListPayload = Partial<Omit<ListData, "id" | "songs">>;
+// export type CreateListPayload = Omit<ListData, "id" | "songs">;
 
-export type UpdateListResponse = "OK";
+// export type CreateListResponse = Pick<ListData, "id">;
 
-export type DeleteListResponse = "OK";
+// export type UpdateListPayload = Partial<Omit<ListData, "id" | "songs">>;
+
+// export type UpdateListResponse = "OK";
+
+// export type DeleteListResponse = "OK";

@@ -5,12 +5,18 @@ import Container from '@mui/material/Container';
 import PlaylistHeader from './PlaylistHeader';
 import PlaylistButton from './PlaylistButton';
 import Songs from './Songs';
+import {Song, ReceivedSong, ReceivedPlaylist, CreateSong} from '@lib/shared_types'
 
 const PlaylistDetails = () => {
-  const { id } = useParams();  // This hook gives us access to the route parameters
-  const [playlist, setPlaylist] = useState<any>(null);
+  const { id } = useParams<string>();
+  const [playlist, setPlaylist] = useState<ReceivedPlaylist>({
+    _id: '',
+    name: '',
+    description: '',
+    songs: [],
+  });
 
-  const handleNewSong = async (song: any) => {
+  const handleNewSong = async (song: CreateSong) => {
     let sameSong = false;
     for (let oldSong of playlist.songs) {
       if (oldSong.title === song.title) {
@@ -38,7 +44,7 @@ const PlaylistDetails = () => {
     }
   };
 
-  const handleDelete = (selectedSongs: any) => {
+  const handleDelete = (selectedSongs: string[]) => {
     if (selectedRows.length === 0) {
       alert('Select the songs you want to delete!');
       return
@@ -77,12 +83,12 @@ const PlaylistDetails = () => {
     fetchPlaylistDetails();
   }, [id]);
 
-  const [rows, setRows] = useState([]);
-  const [selectedRows, setselectedRows] = useState([]);
+  const [rows, setRows] = useState<Song[]>([]);
+  const [selectedRows, setselectedRows] = useState<any>([]);
   useEffect(() => {
     axiosInstance.get(`lists/${id}/songs`)
       .then(response => {
-        const fetchedSongs = response.data.map(song => ({
+        const fetchedSongs = response.data.map((song: ReceivedSong) => ({
           id: song._id,
           title: song.title,
           author: song.author,

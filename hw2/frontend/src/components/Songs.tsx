@@ -1,7 +1,9 @@
-import { DataGrid, GridRowModel } from '@mui/x-data-grid';
+import { DataGrid, GridRowModel, GridRowSelectionModel } from '@mui/x-data-grid';
 import axiosInstance from './AxiosConfig'
+import { Song } from '@lib/shared_types';
 
 const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
+  console.log(newRow, oldRow);
   return new Promise((resolve, reject) => {
     const { id, ...updateData } = newRow;
     axiosInstance.put(`/songs/${newRow.id}`, updateData)
@@ -23,7 +25,7 @@ const handleProcessRowUpdateError = () => {
   console.log("error");
 }
 
-const isValidURL = (str) => {
+const isValidURL = (str: string) => {
   const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name and extension
     '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR, IP address
@@ -32,7 +34,6 @@ const isValidURL = (str) => {
     '(\\#[-a-z\\d_]*)?$', 'i'); // fragment
   return !!pattern.test(str);
 }
-
 
 const columns = [
   { field: 'id', headerName: 'ID'},
@@ -43,8 +44,8 @@ const columns = [
     headerName: 'Link', 
     flex: 3, 
     editable: true,
-    renderCell: (params) => {
-      if (isValidURL(params.value)) {
+    renderCell: (params: any) => {
+      if (typeof params.value === 'string' && isValidURL(params.value)) {
         return (
           <a href={params.value} target="_blank" rel="noopener noreferrer">
             {params.value}
@@ -56,13 +57,18 @@ const columns = [
   },
 ];
 
-function MyDataGrid({ rows, selectedRows, setSelectedRows }) {
+type MyDataGridProps = {
+  rows: Song[];
+  selectedRows: string[]; 
+  setSelectedRows: (selected: GridRowSelectionModel) => void;
+};
+
+function MyDataGrid({ rows, selectedRows, setSelectedRows }: MyDataGridProps) {
   return (
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid 
           rows={rows} 
           columns={columns} 
-          pageSize={5} 
           checkboxSelection
           processRowUpdate={processRowUpdate}
           onProcessRowUpdateError={handleProcessRowUpdateError}

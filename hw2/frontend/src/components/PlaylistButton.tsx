@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Select, MenuItem } from '@mui/material';
 import axiosInstance from './AxiosConfig'
+import { CreateSong, ReceivedPlaylist } from '@lib/shared_types';
 
 interface Props {
-    listId: string;
-    onNewSong: (song: any) => void;
-    onDelete: (songs: any) => void;
+    listId: string | undefined;
+    onNewSong: (song: CreateSong) => void;
+    onDelete: () => void;
     selectedRows: string[];
 }
 
@@ -21,8 +22,8 @@ const PlaylistButton: React.FC<Props> = ({ listId, onNewSong, onDelete, selected
         axiosInstance.get('/lists')  // Adjust the endpoint as per your API
             .then(response => {
                 const fetchedPlaylists = response.data
-                    .filter(playlist => playlist._id !== listId)  // Exclude the playlist with id=listID
-                    .map(playlist => ({
+                    .filter((playlist: ReceivedPlaylist) => playlist._id !== listId)  // Exclude the playlist with id=listID
+                    .map((playlist: ReceivedPlaylist) => ({
                         id: playlist._id,
                         name: playlist.name
                     }));
