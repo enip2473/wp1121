@@ -20,13 +20,13 @@ import { useUser } from '@/contexts/UserContext';
 /* TODO 4.2: Render User Information - gender (8%) */
 /* Create props `gender` for the `GenderItem` component */
 /* What type should it be? (Hint: You can find it in this file) */
-const GenderItem = (/* Implement me */) => {
+const GenderItem = ({ gender }: { gender: NonNullable<User['sex']> }) => {
   return (
     <FormItem className="flex items-center space-x-3 space-y-0">
       <FormControl>
-        <RadioGroupItem value="Replace me" />
+        <RadioGroupItem value={gender} />
       </FormControl>
-      <FormLabel className="font-normal">Replace me</FormLabel>
+      <FormLabel className="font-normal">{gender}</FormLabel>
     </FormItem>
   );
 };
@@ -84,8 +84,28 @@ const Profile = (): React.ReactNode => {
           {/* You should use a `Textarea` component */}
           {/* It should have a placeholder of "Tell us a little bit about yourself" */}
           {/* It is not required */}
-          <p className="text-destructive">Replace me</p>
-          {/* End of TODO 5.1 */}
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bio</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    data-testid="input-bio"
+                    placeholder="Tell us a little bit about yourself"
+                  />
+                </FormControl>
+                <FormDescription>
+                  Share a brief overview of who you are and what you do.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* End of TODO 4.1 */}
           <FormField
             control={form.control}
             name="sex"
@@ -102,8 +122,11 @@ const Profile = (): React.ReactNode => {
                     {/* Use `genders` array to render the radio group items */}
                     {/* Use the `GenderItem` component to render each item */}
                     {/* Send the `gender` as a prop to the `GenderItem` component */}
-                    <p className="text-destructive">Replace me</p>
-                    {/* End of TODO 5.2 */}
+                    {genders.map((gender) => (
+                      <GenderItem key={gender} gender={gender} />
+                    ))}
+
+                    {/* End of TODO 4.2 */}
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />
@@ -135,8 +158,8 @@ const Profile = (): React.ReactNode => {
                     className="h-full w-full rounded-md object-cover"
                   />
                   <span data-testid="label-upload">Upload a picture</span>
-                  {/* End of TODO 5.3 */}
-                  {/* End of TODO 5.5 */}
+                  {/* End of TODO 4.3 */}
+                  {/* End of TODO 4.5 */}
                 </FormLabel>
                 <FormControl>
                   <Input

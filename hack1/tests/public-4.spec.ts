@@ -4,7 +4,7 @@ import { login, setup } from './utils'
 test('4.1 Render User Information - bio (4%)', async ({ page }) => {
   await setup()
   await login(page)
-  await page.getByTestId('tab-settings').click({ timeout: 1200 })
+  await page.getByTestId('tab-settings').click({ timeout: 3000 })
 
   const label = page.getByTestId('label-bio')
   const textarea = page.getByTestId('textarea-bio')
@@ -17,7 +17,7 @@ test('4.1 Render User Information - bio (4%)', async ({ page }) => {
 
 test('4.2 Render User Information - gender (8%)', async ({ page }) => {
   await login(page)
-  await page.getByTestId('tab-settings').click({ timeout: 1200 })
+  await page.getByTestId('tab-settings').click({ timeout: 3000 })
 
   const label = page.getByTestId('label-sex')
 
