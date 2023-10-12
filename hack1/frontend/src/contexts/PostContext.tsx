@@ -77,12 +77,40 @@ export const PostsProvider = ({ children }: PropsWithChildren) => {
     vote: 'upvote' | 'downvote',
   ) => {
     if (posts === null || user === null) return;
+  
+    const currentPost = posts[index];
+  
+    // Check if the user has already upvoted or downvoted the post
+    const hasUpvoted = currentPost.upvotes.includes(userId);
+    const hasDownvoted = currentPost.downvotes.includes(userId);
+  
     if (vote === 'upvote') {
-      // handle upvotes
+      if (hasUpvoted) {
+        // Undo the upvote if the user has already upvoted
+        await undoUpvotePost(index, userId);
+      } else {
+        // If the user has downvoted before, undo the downvote first
+        if (hasDownvoted) {
+          await undoDownvotePost(index, userId);
+        }
+        // Then upvote
+        await upvotePost(index, userId);
+      }
     } else if (vote === 'downvote') {
-      // handle downvotes
+      if (hasDownvoted) {
+        // Undo the downvote if the user has already downvoted
+        await undoDownvotePost(index, userId);
+      } else {
+        // If the user has upvoted before, undo the upvote first
+        if (hasUpvoted) {
+          await undoUpvotePost(index, userId);
+        }
+        // Then downvote
+        await downvotePost(index, userId);
+      }
     }
   };
+  
 
   const upvotePost = async (index: number, userId: string) => {
     if (posts === null) return;
