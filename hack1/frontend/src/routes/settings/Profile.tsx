@@ -93,7 +93,7 @@ const Profile = (): React.ReactNode => {
                 <FormControl>
                   <Textarea
                     {...field}
-                    data-testid="input-bio"
+                    data-testid="textarea-bio"
                     placeholder="Tell us a little bit about yourself"
                   />
                 </FormControl>

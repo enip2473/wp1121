@@ -85,8 +85,6 @@ export const updateUser = asyncWrapper(
 
     // Save the updated user to the database
     const updatedUser = await user.save();
-
-    // Return the updated user
     res.status(200).json(updatedUser);
 
     /* End of TODO 5.4 */
