@@ -66,7 +66,15 @@ export const PostsProvider = ({ children }: PropsWithChildren) => {
   /* TODO 3.3: Edit User Posts With Editor (8%) */
   const updatePost = async (index: number, title: string, content: string) => {
     if (posts === null) return;
-    /* Hint 3.3.1: Use the correct API from `PostService` to update DB */
+    if (user === null) return;
+    const postId = posts[index]._id;
+    const updatedPostData = await PostService.update(postId, { title, content, author: user._id });
+    // If the service call was successful, then updatedPostData should have the updated post.
+    // Now, let's update the state with the new post data.
+    const updatedPosts = [...posts];
+    updatedPosts[index] = updatedPostData;
+    setPosts(updatedPosts);
+      /* Hint 3.3.1: Use the correct API from `PostService` to update DB */
     /* Hint 3.3.2: Use React hook to update frontend */
   };
   /* END TODO 3.3 */

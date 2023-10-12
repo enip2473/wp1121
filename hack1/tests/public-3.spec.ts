@@ -10,6 +10,8 @@ test('3.1 Create a New Post With the Editor (5%)', async ({ page }) => {
 
   await page.getByTestId('tab-create').click()
   await filenameInput.fill('Lorem Post 3')
+  await page.waitForTimeout(1500)
+
   await editor.click()
   await page.keyboard.type(`console.log("Hello, Lorem Post 3!")`)
   await page.waitForTimeout(500)
@@ -48,6 +50,8 @@ test('3.3 Edit User Posts With Editor (8%)', async ({ page }) => {
   await login(page)
   await page.getByTestId('tab-create').click()
   await loremPost1.click()
+  await page.waitForTimeout(1500)
+
   await editor.click()
   await page.waitForTimeout(500)
   await page.keyboard.type(`modified`)
