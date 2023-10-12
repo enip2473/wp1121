@@ -72,7 +72,23 @@ export const updateUser = asyncWrapper(
     /* TODO 4.4: Update User Information (6%) */
     /* Return 200 with updated user */
     /* Return 404 with "User not found" if update fails */
-    throw new Error('`updateUser` Not Implemented');
+    const user = await UserModel.findById(req.params.id);
+
+    // Check if user was found
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    // Update user properties with provided data. Here, I'm assuming the payload matches the user's fields.
+    Object.assign(user, req.body);
+
+    // Save the updated user to the database
+    const updatedUser = await user.save();
+
+    // Return the updated user
+    res.status(200).json(updatedUser);
+
     /* End of TODO 5.4 */
   },
 );

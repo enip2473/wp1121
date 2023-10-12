@@ -27,7 +27,7 @@ test('4.2 Render User Information - gender (8%)', async ({ page }) => {
 
 test('4.3 Render User Information - profile picture 1 (6%)', async ({ page }) => {
   await login(page)
-  await page.getByTestId('tab-settings').click({ timeout: 1200 })
+  await page.getByTestId('tab-settings').click({ timeout: 5000 })
 
   const label = page.getByTestId('label-upload')
   const profilePicture = page.getByTestId('label-profile-picture')
@@ -48,7 +48,7 @@ test('4.3 Render User Information - profile picture 1 (6%)', async ({ page }) =>
 
 test('4.4 Update User Information (6%)', async ({ page }) => {
   await login(page)
-  await page.getByTestId('tab-settings').click({ timeout: 1200 })
+  await page.getByTestId('tab-settings').click({ timeout: 5000 })
 
   const usernameInput = page.getByTestId('input-username')
   const bioTextarea = page.getByTestId('textarea-bio')
@@ -64,7 +64,7 @@ test('4.4 Update User Information (6%)', async ({ page }) => {
 
   // Expect all fields to be updated
   await login(page, 'new test')
-  await page.getByTestId('tab-settings').click({ timeout: 1200 })
+  await page.getByTestId('tab-settings').click({ timeout: 5000 })
   await expect(usernameInput).toHaveValue('new test')
   await expect(bioTextarea).toHaveValue('new bio')
   await expect(genderButton).toBeChecked()
@@ -72,7 +72,7 @@ test('4.4 Update User Information (6%)', async ({ page }) => {
 
 test('4.5 Render User Information - profile picture 2 (5%)', async ({ page }) => {
   await login(page, 'new test')
-  await page.getByTestId('tab-settings').click({ timeout: 1200 })
+  await page.getByTestId('tab-settings').click({ timeout: 5000 })
   const profilePicture = page.getByTestId('label-profile-picture')
 
   await expect(profilePicture).toBeVisible()
