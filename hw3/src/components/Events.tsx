@@ -6,7 +6,7 @@ import { formatDate } from '@/lib/utils';
 interface EventsProp {
     username: string;
     searchTerm: string;
-    // refreshKey: number;
+    refreshKey: number;
 }
 
 interface SingleEventProp {
@@ -23,7 +23,7 @@ interface Event {
     participationCount: number;
 }
 
-function Events({ username, searchTerm } : EventsProp) {
+function Events({ username, searchTerm, refreshKey } : EventsProp) {
     const [events, setEvents] = useState<Event[]>([]);
     
     useEffect(() => {
@@ -48,7 +48,7 @@ function Events({ username, searchTerm } : EventsProp) {
             }
         }
         fetchEvents();
-    }, [searchTerm, username]);
+    }, [searchTerm, username, refreshKey]);
 
     // useEffect(() => {
     //     const params = {username: username};

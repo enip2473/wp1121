@@ -1,3 +1,4 @@
+"use client"
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { datesBetween, valid } from "@/lib/utils"
@@ -29,17 +30,15 @@ function style(
   else {
     const ratio = cellNumber / totalNumber;
     var retStyle;
+    const colors = ["bg-green-300", "bg-green-400", "bg-green-500", "bg-green-600", "bg-green-700", "bg-green-800"]
     for (var i = 1; i <= 6; i++) {
       if (ratio <= i / 6 + 1e-6) {
-        retStyle = `bg-green-${i * 100 + 200}`;
+        retStyle = colors[i - 1];
         break;
       }
     }
     return retStyle;
   }
-  // if (isParticipating && cellParticipating) {
-  //   answer = answer + ' border border-pink'
-  // }
 }
 
 function Timetable({isParticipating, username, eventId, participationCount}: TimetableProps) {
@@ -73,7 +72,7 @@ function Timetable({isParticipating, username, eventId, participationCount}: Tim
         setIsAvailable(isUserAvailable);
       }
       fetchData();
-    }, [])
+    }, [isParticipating])
     
     if (!eventTime || availableCount.length == 0) {
       return (
@@ -83,6 +82,8 @@ function Timetable({isParticipating, username, eventId, participationCount}: Tim
       
     const dates = datesBetween(eventTime.startTime, eventTime.endTime);
     const onCellClick = async (index: number) => {
+      if (!isParticipating) return;
+      if (availableCount[index] == -1) return;
       const newAvailable = [...isAvailable];
       const newCount = [...availableCount];
       if (isAvailable[index]) {
@@ -120,7 +121,9 @@ function Timetable({isParticipating, username, eventId, participationCount}: Tim
       setIsAvailable(newAvailable);
       setAvailableCount(newCount);
     }
+
     return (
+      <div className="flex-col justify-center items-center">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -151,7 +154,26 @@ function Timetable({isParticipating, username, eventId, participationCount}: Tim
             ))}
           </tbody>
         </table>
-      );
+        <div className="flex mt-4 justify-center items-center">
+          <span className="text-xs px-2"> 0/{participationCount} </span>
+            <table>
+              <tbody>
+                <tr key="only">
+                  {Array(+participationCount + 1).fill(0).map((_, index) => 
+                    <td 
+                      key={index} 
+                      className={`px-6 py-2 border border-white whitespace-nowrap cursor-pointer 
+                        ${style(false, index, false, participationCount)}`
+                      } 
+                    ></td>
+                  )}
+                </tr>
+              </tbody>
+            </table>
+          <span className="text-xs px-2">{participationCount}/{participationCount}</span>
+        </div>
+      </div>
+    );
 }
 
 export default Timetable;

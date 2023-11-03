@@ -10,7 +10,7 @@ import { start } from 'repl';
 interface SearchAddBarProps {
     searchTerm: string;
     // setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-    // setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
+    setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface SearchBarProps {
@@ -34,6 +34,7 @@ type NewEventProps = {
 type NewEventBarProps = {
     isModalOpen: boolean;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
 }
 
 type DateTimeProps = {
@@ -42,7 +43,7 @@ type DateTimeProps = {
 }
 
 
-function SearchAddBar({searchTerm} : SearchAddBarProps) {
+function SearchAddBar({searchTerm, setRefreshKey} : SearchAddBarProps) {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     return (
         <div className="pl-10 relative flex w-full items-center justify-between">
@@ -50,21 +51,21 @@ function SearchAddBar({searchTerm} : SearchAddBarProps) {
             <button onClick={() => setIsModalOpen(true)} className="mr-8 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Create New Event
             </button>
-            {isModalOpen && <NewEventBar isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
+            {isModalOpen && <NewEventBar setRefreshKey={setRefreshKey} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
         </div>
     );
 }
 
 function SearchBar({searchTerm} : SearchBarProps) {
-    const [input, setInput] = useState(searchTerm);
+    const [input, setInput] = useState('');
     const searchParams = useSearchParams();
+
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('searchTerm', input);
 
     useEffect(() => {
-        setInput('');
-    }, [searchParams.get('username')]
-    );
+        setInput(searchTerm);
+    }, [searchTerm])
           
     return (
         <div className="flex items-center p-4 rounded w-1/2">
@@ -93,12 +94,23 @@ function validateEvent(event: NewEventProps) {
             event.startTime.date,
             event.startTime.hours,
         )
+        
+        if (startDate.getMonth() != event.startTime.month - 1) {
+            return "Invalid Start Time!";
+        }
+
+
         endDate = new Date(
             event.endTime.year, 
             event.endTime.month - 1,
             event.endTime.date,
             event.endTime.hours,
         )
+
+        if (endDate.getMonth() != event.endTime.month - 1) {
+            return "Invalid End Time!";
+        }
+
         if (startDate.getTime() >= endDate.getTime()) {
             return "Start time should be smaller than end time"
         }
@@ -114,7 +126,7 @@ function validateEvent(event: NewEventProps) {
     return '';
 }
 
-function NewEventBar({isModalOpen, setIsModalOpen}: NewEventBarProps) {
+function NewEventBar({isModalOpen, setIsModalOpen, setRefreshKey}: NewEventBarProps) {
     const currentTime = new Date();
     const curTime = {
         year: currentTime.getFullYear(),
@@ -125,6 +137,7 @@ function NewEventBar({isModalOpen, setIsModalOpen}: NewEventBarProps) {
     const [newEvent, setNewEvent] = useState<NewEventProps>({eventName:'', startTime: curTime, endTime: curTime})
     const modalRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
+    const params = useSearchParams();
     
     const handleCloseModal = () => {
         setNewEvent({eventName:'', startTime: curTime, endTime: curTime});
@@ -153,12 +166,22 @@ function NewEventBar({isModalOpen, setIsModalOpen}: NewEventBarProps) {
             )
         };
         try {
-            await axios.post('/api/events', postEvent);
+            const result = await axios.post('/api/events', postEvent);
+            const resultData = await result.data;
+            const username = params.get('username')
+            const eventId = resultData.eventId;
+            const participateData = {
+                username, 
+                eventId, 
+                inserting: true
+            }
+            await axios.post('/api/participations', participateData)
             handleCloseModal();
-            router.refresh();
+            router.push(`/events/${eventId}?username=${username}`)
         } catch (error) {
             console.error('Error posting event:', error);
         }
+        setRefreshKey(prev => prev + 1);
     };
 
     useEffect(() => {
@@ -221,23 +244,6 @@ function NewEventBar({isModalOpen, setIsModalOpen}: NewEventBarProps) {
                 <DateTimeDropdown newDate={newEvent.startTime} handleChange={handleStartTimeChange} />
                 <div>End Time:</div>
                 <DateTimeDropdown newDate={newEvent.endTime} handleChange={handleEndTimeChange} />
-
-                {/* <input 
-                    type="text" 
-                    name="startTime"
-                    placeholder="Start Time" 
-                    value={newEvent.startTime}
-                    onChange={handleChange}
-                    className="border p-2 rounded mt-2 w-full"
-                />
-                <input 
-                    type="text"
-                    name="endTime"
-                    placeholder="End Time" 
-                    value={newEvent.endTime}
-                    onChange={handleChange}
-                    className="border p-2 rounded mt-2 w-full"
-                /> */}
                 <button onClick={handleSubmit} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded mt-2">
                     Submit
                 </button>

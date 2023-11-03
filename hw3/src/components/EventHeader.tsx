@@ -3,6 +3,7 @@ import Link from "next/link"
 import { formatDate } from '@/lib/utils'
 import React from 'react'
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 type EventHeaderProps = {
     eventId: number;
@@ -73,6 +74,7 @@ type ParticipateButtonProps = {
 }
 
 function ParticipateButton ({ username, eventId, isParticipating, setIsParticipating }: ParticipateButtonProps) {
+    const router = useRouter();
     const buttonText = isParticipating ? 'Leave Event' : 'Join Event';
     const buttonClasses = isParticipating ? 
         "bg-red-500 hover:bg-red-600" : 
@@ -80,22 +82,25 @@ function ParticipateButton ({ username, eventId, isParticipating, setIsParticipa
 
     const handleClick = async () => {
         try {
-            if (isParticipating) {
-                const postData = {
-                    username: username, 
-                    eventId: eventId,
-                    inserting: false
-                }
-                await axios.post("/api/participations", postData);
-            } else {
+            if (!isParticipating) {
                 const postData = {
                     username: username, 
                     eventId: eventId,
                     inserting: true
                 }
                 await axios.post("/api/participations", postData);
+            } else {
+                const postData = {
+                    username: username, 
+                    eventId: eventId,
+                    inserting: false
+                }
+                const removeParticipation = axios.post("/api/participations", postData);
+                const removeAvailable = axios.delete(`/api/availableTimes/${eventId}?username=${username}`);
+                Promise.all([removeParticipation, removeAvailable])
             }
             setIsParticipating(!isParticipating);
+            router.refresh()
         }
         catch (error) {
             console.log(error);

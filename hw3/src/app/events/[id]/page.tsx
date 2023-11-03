@@ -42,12 +42,11 @@ export default function Page({ params } : PageType) {
                 endTime: new Date(eventData.event.endTime),
                 isParticipating: attending.includes(id)
             }
-            console.log(attending);
             setEvent(fetchedEvent);
             setParticipateStatus(fetchedEvent.isParticipating);
         }
         start();
-    }, []);
+    }, [participateStatus]);
     
     if (!event) {
         return (

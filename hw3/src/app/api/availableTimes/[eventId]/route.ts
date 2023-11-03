@@ -99,3 +99,29 @@ export async function POST(request: NextRequest) {
         );
     }
 }
+
+
+export async function DELETE(request: NextRequest, { params }: GetParamsType) {
+    const searchParams = request.nextUrl.searchParams;
+    const username = searchParams.get('username') || '';
+    const eventId = params.eventId;
+    try {
+        let query = db.delete(timeTable)
+        .where(
+            and(
+                eq(timeTable.eventId, eventId),
+                eq(timeTable.username, username)
+            )
+        )
+
+        const result = await query.execute();
+        console.log(result);
+        return NextResponse.json({ ok: "OK" }, { status: 200 });
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json(
+            { error: error },
+            { status: 500 },
+        );
+    }
+}

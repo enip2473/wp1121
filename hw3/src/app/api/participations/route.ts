@@ -36,9 +36,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
-  console.log(data);
   try {
-    // parse will throw an error if the data doesn't match the schema
     postParticipationRequestSchema.parse(data);
   } catch (error) {
     // in case of an error, we return a 400 response

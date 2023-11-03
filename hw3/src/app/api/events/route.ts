@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
 import { eventsTable, participationsTable } from "@/db/schema";
-import { like, sql, eq } from "drizzle-orm";
+import { like, sql, eq, asc } from "drizzle-orm";
 // zod is a library that helps us validate data at runtime
 // it's useful for validating data coming from the client,
 // since typescript only validates data at compile time.
@@ -18,13 +18,6 @@ const postEventRequestSchema = z.object({
 // you can use z.infer to get the typescript type from a zod schema
 type PostEventRequest = z.infer<typeof postEventRequestSchema>;
 
-// This API handler file would be trigger by http requests to /api/likes
-// POST requests would be handled by the POST function
-// GET requests would be handled by the GET function
-// etc.
-// read more about Next.js API routes here:
-// https://nextjs.org/docs/app/building-your-application/routing/route-handlers
-
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const searchTerm = params.get('searchTerm');
@@ -37,23 +30,19 @@ export async function GET(request: NextRequest) {
       endTime: eventsTable.endTime,
       participationCount: sql<number>`count(${participationsTable.id})`
     }).from(eventsTable);
-
+    
     if (searchTerm) {
       query = query.where(like(eventsTable.eventName, `%${searchTerm}%`));
     }
-
-    query = query.leftJoin(participationsTable, eq(participationsTable.eventId, eventsTable.id))
-                 .groupBy(eventsTable.id);
-
-    // await db.select({
-    //   teamName: team.teamname,
-    //   time: team.team_timestamp
-    //   strength: sql<number>`count(${player.team_id})`
-    // }).from(team)
-    // .leftJoin(player, eq(team.team_id, player.team_id))
-    // .groupBy(team.team_id)
-    // .orderBy(desc(sql`count(${player.team_id})`));
     
+    query = query
+      .leftJoin(
+        participationsTable, 
+        eq(participationsTable.eventId, eventsTable.id)
+      )
+      .groupBy(eventsTable.id)
+      .orderBy(asc(eventsTable.createdAt))
+
     const events = await query.execute();
 
     return NextResponse.json({ events }, { status: 200 });
@@ -92,8 +81,9 @@ export async function POST(request: NextRequest) {
         startTime: new Date(startTime),
         endTime: new Date(endTime),
       })
+      .returning({ eventId: eventsTable.id })
       .execute();
-    return new NextResponse("OK", { status: 200 });
+    return NextResponse.json(result[0], { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

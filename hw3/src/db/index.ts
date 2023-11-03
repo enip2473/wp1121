@@ -11,12 +11,8 @@ const client = new Client({
 // to use top level await (await outside of an async function)
 // we need to enable it in the tsconfig.json file to make typescript happy.
 // Change the "target" field to "es2017" in the tsconfig.json file.
-const connectClient = async () => {
+(async () => {
   await client.connect();
-}
-
-connectClient();
-
-console.log("Connected to database!")
+})()
 
 export const db = drizzle(client);
