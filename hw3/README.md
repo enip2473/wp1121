@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 使用說明
 
-## Getting Started
+## 設定 .env
 
-First, run the development server:
+將最外層的 .env.example 重命名為 .env
 
-```bash
-npm run dev
-# or
+在 .env 中的 POSTGRES_URL 填入你的 database 的網址。
+
+## 下載 package
+
+yarn
+
+## 開啟網頁
+
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 首頁
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+左上角顯示當前使用者名稱 (一開始預設為 guest)。
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+右上角有 Change Name 按鈕可修改使用名稱。
 
-## Learn More
+在搜尋欄中打上想要搜尋的活動，按下放大鏡圖示後就能顯示搜尋結果。
 
-To learn more about Next.js, take a look at the following resources:
+點擊 Create Event 按鈕可新增一個活動
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+下方列出每個活動的名稱、開始與結束時間、參加人數等。若自己有參加該活動則背景變為綠色且右上方顯示勾勾。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+點擊任一活動即進到該活動頁面。
 
-## Deploy on Vercel
+## 活動
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+中間上方顯示活動名稱與時間、左上角為上一頁功能、右上點擊可參加活動、再點一次則退出活動。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+左邊顯示留言板，參加活動即可進行留言。
+
+右邊為 When2meet 界面，點一下可選擇該時段、再點一下可取消該時段。
+
+當滑鼠移到表上時以框框標出自己可參與之時段。
+
+## 要求
+
+基礎與進階要求皆有完成
+
+
+
+
+
