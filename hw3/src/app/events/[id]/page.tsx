@@ -36,9 +36,9 @@ export default function Page({ params } : PageType) {
             const eventData = eventResponse.data.event;
             const attending = participationResponse.data.attendingEvents;
             const fetchedEvent: EventType = {
-                ...eventData.event,
-                startTime: new Date(eventData.event.startTime),
-                endTime: new Date(eventData.event.endTime),
+                ...eventData,
+                startTime: new Date(eventData.startTime),
+                endTime: new Date(eventData.endTime),
                 isParticipating: attending.includes(id)
             }
             setEvent(fetchedEvent);

@@ -1,6 +1,6 @@
 'use client';
-import UsernameBar from '@/components/UsernameBar.client'
-import SearchAddBar from '@/components/SearchAddBar.client';
+import UsernameBar from '@/components/UsernameBar'
+import SearchAddBar from '@/components/SearchAddBar';
 import Events from '@/components/Events';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
