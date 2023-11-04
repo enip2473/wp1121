@@ -29,13 +29,12 @@ export default function Page({ params } : PageType) {
 
     useEffect(() => {
         const start = async () => {
-            const getEvent = axios.get(`/api/events/${id}`);
-            const getParticipation = axios.get(`/api/participations?username=${username}`);
-            const eventResponse = await getEvent;
-            const participationResponse = await getParticipation
-            const eventData = await eventResponse.data;
-            const participation = await participationResponse.data;
-            const attending = participation.attendingEvents;
+            const [eventResponse, participationResponse] = await Promise.all([
+                axios.get(`/api/events/${id}`),
+                axios.get(`/api/participations?username=${username}`)
+            ]);    
+            const eventData = eventResponse.data.event;
+            const attending = participationResponse.data.attendingEvents;
             const fetchedEvent: EventType = {
                 ...eventData.event,
                 startTime: new Date(eventData.event.startTime),
@@ -46,7 +45,7 @@ export default function Page({ params } : PageType) {
             setParticipateStatus(fetchedEvent.isParticipating);
         }
         start();
-    }, [participateStatus]);
+    }, [participateStatus, id, username]);
     
     if (!event) {
         return (

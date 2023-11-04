@@ -50,24 +50,10 @@ function Events({ username, searchTerm, refreshKey } : EventsProp) {
         fetchEvents();
     }, [searchTerm, username, refreshKey]);
 
-    // useEffect(() => {
-    //     const params = {username: username};
-    //     const fetchParticipate = async () => {
-    //         try {
-    //             const response = await axios.get('/api/participate', { params });
-    //             const participateEvents: number[] = response.data;
-    //             setParticipate(participateEvents);
-    //         } catch (error) {
-    //             console.error("Error fetching events:", error);
-    //         }
-    //     }
-    //     fetchParticipate();
-    // }, [username]);
-
     return (
         <div className="w-full p-8 flex flex-wrap justify-center align-start gap-4">
             {events.map(event => (
-                <SingleEvent username={username} event={event}/>
+                <SingleEvent key={event.id} username={username} event={event}/>
             ))}
         </div>
     );

@@ -51,7 +51,7 @@ function Comments({username, eventId, isParticipating}: CommentsProp) {
             }
         }
         getComments();
-    }, []);
+    }, [eventId]);
     return (
         <div>
             <InputBar username={username} eventId={eventId} isParticipating={isParticipating} setComments={setComments} />
@@ -73,7 +73,7 @@ function InputBar({ username, eventId, isParticipating, setComments }: InputBarP
                 content: input,
             }
             try {
-                const result = await axios.post(`/api/comments/${eventId}`, newComment)
+                await axios.post(`/api/comments/${eventId}`, newComment)
                 setComments(prevComments => [...prevComments, newComment]);
                 setInput('');
             }

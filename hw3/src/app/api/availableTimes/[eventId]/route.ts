@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
 import { timeTable } from "@/db/schema";
-import { like, sql, eq, and } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 type GetParamsType = {
     params: { 
@@ -32,14 +32,22 @@ export async function GET(request: NextRequest, { params }: GetParamsType) {
             availableTime: timeTable.availableTime,
         })
         .from(timeTable)
-        .where(
-            eq(timeTable.eventId, eventId)
-        )
+
         if (username) {
-            query = query.where(eq(timeTable.username, username));
+            query = query.where(
+                and(
+                    eq(timeTable.username, username),
+                    eq(timeTable.eventId, eventId)
+                )
+            )
+        }
+        else {
+            query = query.where(
+                eq(timeTable.eventId, eventId)
+            )
         }
         const comments = await query.execute();
-        const counter = new Array(168).fill(0);
+        const counter = new Array(24 * 8).fill(0);
         
         comments.forEach((comment) => {
             counter[comment.availableTime] += 1;
@@ -106,17 +114,15 @@ export async function DELETE(request: NextRequest, { params }: GetParamsType) {
     const username = searchParams.get('username') || '';
     const eventId = params.eventId;
     try {
-        let query = db.delete(timeTable)
+        const query = db.delete(timeTable)
         .where(
             and(
                 eq(timeTable.eventId, eventId),
                 eq(timeTable.username, username)
             )
         )
-
-        const result = await query.execute();
-        console.log(result);
-        return NextResponse.json({ ok: "OK" }, { status: 200 });
+        await query.execute();
+        return NextResponse.json({ ok: true }, { status: 200 });
     } catch (error) {
         console.log(error);
         return NextResponse.json(

@@ -1,21 +1,18 @@
 'use client';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { Search } from 'react-feather';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 import { datesBetween } from '@/lib/utils';
-import { start } from 'repl';
 
 interface SearchAddBarProps {
     searchTerm: string;
-    // setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
     setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface SearchBarProps {
     searchTerm: string;
-    // setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
 }
 
 type eventDate = {
@@ -86,7 +83,7 @@ function validateEvent(event: NewEventProps) {
     if (event.eventName == '') {
         return "Please enter event name!";
     }
-    var startDate, endDate;
+    let startDate, endDate;
     try {
         startDate = new Date(
             event.startTime.year, 
@@ -127,23 +124,28 @@ function validateEvent(event: NewEventProps) {
 }
 
 function NewEventBar({isModalOpen, setIsModalOpen, setRefreshKey}: NewEventBarProps) {
-    const currentTime = new Date();
-    const curTime = {
-        year: currentTime.getFullYear(),
-        month: currentTime.getMonth() + 1,
-        date: currentTime.getDate(),
-        hours: currentTime.getHours(),
-    }
+    
+    const curTime = useMemo(() => {
+        const currentTime = new Date();
+        return {
+            year: currentTime.getFullYear(),
+            month: currentTime.getMonth() + 1,
+            date: currentTime.getDate(),
+            hours: currentTime.getHours(),
+        };
+    }, []); 
+    
     const [newEvent, setNewEvent] = useState<NewEventProps>({eventName:'', startTime: curTime, endTime: curTime})
-    const modalRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
     const params = useSearchParams();
     
-    const handleCloseModal = () => {
+    const modalRef = useRef<HTMLDivElement | null>(null);
+    
+    const handleCloseModal = useCallback(() => {
         setNewEvent({eventName:'', startTime: curTime, endTime: curTime});
         setIsModalOpen(false);
-    };    
-
+    }, [curTime, setIsModalOpen, setNewEvent]);
+    
     const handleSubmit = async () => {
         const errorMessage = validateEvent(newEvent);
         if (errorMessage) {
@@ -184,18 +186,18 @@ function NewEventBar({isModalOpen, setIsModalOpen, setRefreshKey}: NewEventBarPr
         setRefreshKey(prev => prev + 1);
     };
 
+    const handleClickOutside = useCallback((event: MouseEvent) => {
+        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+            handleCloseModal();
+        }
+    }, [handleCloseModal]); 
+
     useEffect(() => {
         if (isModalOpen) document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isModalOpen]);
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-            handleCloseModal();
-        }
-    };
+    }, [isModalOpen, handleClickOutside]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -255,11 +257,9 @@ function NewEventBar({isModalOpen, setIsModalOpen, setRefreshKey}: NewEventBarPr
     );
 }
 
-const DateTimeDropdown = ({ newDate, handleChange }: DateTimeProps) => {
+function DateTimeDropdown({ newDate, handleChange }: DateTimeProps) {
     return (
-        <div className="flex space-x-2"> {/* Flex container for horizontal alignment */}
-            
-            {/* Year Dropdown */}
+        <div className="flex space-x-2">
             <select 
                 name="year"
                 value={newDate.year}

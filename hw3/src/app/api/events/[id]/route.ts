@@ -1,14 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
-
-import { z } from "zod";
 import { db } from "@/db";
 import { eventsTable, participationsTable } from "@/db/schema";
-import { like, sql, eq } from "drizzle-orm";
-// zod is a library that helps us validate data at runtime
-// it's useful for validating data coming from the client,
-// since typescript only validates data at compile time.
-// zod's schema syntax is pretty intuitive,
-// read more about zod here: https://zod.dev/
+import { sql, eq } from "drizzle-orm";
+
 type GetParamsType = {
     params: { 
         id: number;
@@ -18,7 +12,7 @@ type GetParamsType = {
 export async function GET(request: NextRequest, { params } : GetParamsType) {
     const eventId = params.id;
     try {
-        let query = db.select({
+        const query = db.select({
             eventName: eventsTable.eventName,
             startTime: eventsTable.startTime,
             endTime: eventsTable.endTime,

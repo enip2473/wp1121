@@ -15,11 +15,20 @@ type EventTimeType = {
     endTime: Date;
 }
 
+function getColor(ratio: number) {
+  const colors = ["bg-green-300", "bg-green-400", "bg-green-500", "bg-green-600", "bg-green-700", "bg-green-800"]
+  for (let i = 1; i <= 6; i++) {
+    if (ratio <= i / 6 + 1e-6) {
+      return colors[i - 1];
+    }
+  }
+}
+
 function style(
-  isParticipating: boolean, 
   cellNumber: number, 
   cellParticipating: boolean, 
-  totalNumber: number
+  totalNumber: number,
+  isHovering: boolean
 ) {
   if (cellNumber == -1) {
     return 'bg-gray-500';
@@ -28,15 +37,8 @@ function style(
     return 'bg-gray-300';
   }
   else {
-    const ratio = cellNumber / totalNumber;
-    var retStyle;
-    const colors = ["bg-green-300", "bg-green-400", "bg-green-500", "bg-green-600", "bg-green-700", "bg-green-800"]
-    for (var i = 1; i <= 6; i++) {
-      if (ratio <= i / 6 + 1e-6) {
-        retStyle = colors[i - 1];
-        break;
-      }
-    }
+    let retStyle = getColor(cellNumber / totalNumber);
+    if (isHovering && cellParticipating) retStyle += " border-2 border-orange-500"
     return retStyle;
   }
 }
@@ -45,7 +47,7 @@ function Timetable({isParticipating, username, eventId, participationCount}: Tim
     const [eventTime, setEventTime] = useState<EventTimeType>();
     const [availableCount, setAvailableCount] = useState<number[]>([]);
     const [isAvailable, setIsAvailable] = useState<boolean[]>([]);
-    
+    const [isHovering, setIsHovering] = useState<boolean>(false);
     
     useEffect(() => {
       const fetchData = async () => {
@@ -72,7 +74,7 @@ function Timetable({isParticipating, username, eventId, participationCount}: Tim
         setIsAvailable(isUserAvailable);
       }
       fetchData();
-    }, [isParticipating])
+    }, [isParticipating, eventId, username])
     
     if (!eventTime || availableCount.length == 0) {
       return (
@@ -124,7 +126,7 @@ function Timetable({isParticipating, username, eventId, participationCount}: Tim
 
     return (
       <div className="flex-col justify-center items-center">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
           <thead className="bg-gray-50">
             <tr>
               <th className="px-1 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"></th> {/* Empty cell */}
@@ -145,7 +147,12 @@ function Timetable({isParticipating, username, eventId, participationCount}: Tim
                   <td 
                     key={date} 
                     className={`px-6 py-1 border border-white whitespace-nowrap cursor-pointer 
-                      ${style(isParticipating, availableCount[dateIndex * 24 + hour] , isAvailable[dateIndex * 24 + hour], participationCount)}`
+                      ${style(
+                        availableCount[dateIndex * 24 + hour], 
+                        isAvailable[dateIndex * 24 + hour], 
+                        participationCount,
+                        isHovering
+                      )}`
                     } 
                     onClick={() => onCellClick(dateIndex * 24 + hour)}
                   ></td>
@@ -163,7 +170,7 @@ function Timetable({isParticipating, username, eventId, participationCount}: Tim
                     <td 
                       key={index} 
                       className={`px-6 py-2 border border-white whitespace-nowrap cursor-pointer 
-                        ${style(false, index, false, participationCount)}`
+                        ${style(index, false, participationCount, false)}`
                       } 
                     ></td>
                   )}

@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
 import { commentsTable } from "@/db/schema";
-import { like, sql, eq, asc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 
 type GetParamsType = {
     params: { 
@@ -23,7 +23,7 @@ type PostCommentRequest = z.infer<typeof postCommentSchema>;
 export async function GET(request: NextRequest, { params } : GetParamsType) {
     const eventId = params.id;
     try {
-        let query = db.select({
+        const query = db.select({
             username: commentsTable.username,
             eventId: commentsTable.eventId,
             content: commentsTable.content,
