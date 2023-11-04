@@ -32,7 +32,7 @@ function EventHeader({
 }: EventHeaderProps) {
     return (
         <div className="flex items-center justify-between p-4">
-            <Link href="/" className="inline-block">
+            <Link href={{pathname: '/', query: { username: username }}} className="inline-block">
                 <GoBackButton />
             </Link>
             

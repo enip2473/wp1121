@@ -38,7 +38,7 @@ function style(
   }
   else {
     let retStyle = getColor(cellNumber / totalNumber);
-    if (isHovering && cellParticipating) retStyle += " border-2 border-purple-500"
+    if (isHovering && cellParticipating) retStyle += " border-2 border-orange-500"
     return retStyle;
   }
 }
