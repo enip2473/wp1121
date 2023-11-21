@@ -12,12 +12,9 @@ import Avatar from '@mui/material/Avatar';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { formatName } from '@/lib/utils';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { LeftBarProps } from '@/lib/types';
 
-export default function LeftBar() {
-    const searchParams = useSearchParams()
-    const username = searchParams.get('username') || ''
-  
+export default function LeftBar({ displayName }: LeftBarProps) {
   return (
     <Drawer
       variant="permanent"
@@ -39,7 +36,7 @@ export default function LeftBar() {
       </Box>
       <Box className="m-8 flex flex-1 items-end justify-center">
         <Box className="items-start"><Avatar className="mr-2"/></Box>
-        <Typography className="flex-1 m-2">{formatName(username)}</Typography>
+        <Typography className="flex-1 m-2">{formatName(displayName)}</Typography>
         <Link href="/">
             <LogoutIcon className="flex-1 m-2"/>
         </Link>

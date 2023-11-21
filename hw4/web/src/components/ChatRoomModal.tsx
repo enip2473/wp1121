@@ -2,26 +2,37 @@ import React, { useState } from 'react';
 import { Box, Modal, Button, IconButton, Typography, FormControl, MenuItem } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CloseIcon from '@mui/icons-material/Close';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { UserSelectModalProps, User } from '@/lib/types';
+import { Endpoints } from '@/lib/endpoints'
+import axios from 'axios';
 
-type UserSelectModalProps = {
-  open: boolean;
-  onClose: () => void;
-};
-
-const UserSelectModal = ({ open, onClose }: UserSelectModalProps) => {
-  const [selectedUser, setSelectedUser] = useState('');
+const UserSelectModal = ({ users, userId, open, onClose }: UserSelectModalProps) => {
+  const [selectedUser, setSelectedUser] = useState<number | undefined>();
   const router = useRouter();
 
-  const users = ['Alice', 'Bob', 'Charlie', 'Dave'];
-
-  const handleUserSelect = (event: SelectChangeEvent<string>) => {
-    setSelectedUser(event.target.value);
+  const handleUserSelect = (event: SelectChangeEvent<number>) => {
+    setSelectedUser(event.target.value as number);
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
+    if (selectedUser) {
+      const postRequest = {
+        chatroomName: "tmp",
+        userIds: [selectedUser, userId]
+      }
+      const response = await axios.post(
+        `${Endpoints.createChatRoom}${userId}`,
+        postRequest
+      )
+      const exist = response.data.exist;
+      if (exist) alert("A chatroom with these members already exists.");
+      const createdRoomId = response.data.chatroomId;
+      router.push(`/?id=${userId}&chat=${createdRoomId}`);
+    }
+
+    setSelectedUser(1);
     onClose();
-    router.refresh();
   };
 
 
@@ -46,8 +57,8 @@ const UserSelectModal = ({ open, onClose }: UserSelectModalProps) => {
             inputProps={{ 'aria-label': 'Without label' }}
           >
             {users.map((user) => (
-              <MenuItem key={user} value={user}>
-                {user}
+              <MenuItem key={user.displayName} value={user.id}>
+                {user.displayName}
               </MenuItem>
             ))}
           </Select>
