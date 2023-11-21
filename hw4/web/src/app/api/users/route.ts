@@ -10,9 +10,9 @@ const postSchema = z.object({
 
 type PostRequest = z.infer<typeof postSchema>;
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
-        let query = db.select({
+        const query = db.select({
             displayName: usersTable.displayName,
             id: usersTable.id,
         })

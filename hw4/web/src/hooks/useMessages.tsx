@@ -21,23 +21,16 @@ export const useMessages = () => {
     }
 
     useEffect(() => {
-        socket.emit('register', userId);
-        socket.on('new message', (newId) => {
-            if (newId !== userId) refetch();
-        });    
-        return function cleanup() {
-            socket.off('new message');
+        if (userId > 0) {
+            socket.emit('register', userId);
+            socket.on('new message', (newId) => {
+                if (newId !== userId) refetch();
+            });    
+            return function cleanup() {
+                socket.off('new message');
+            }
         }
     }, [userId]);
-
-    useEffect(() => {
-        const putRequest = {
-            userId,
-            chatroomId: chatId,
-            notify: true
-        }
-        axios.put(Endpoints.updateHasRead, putRequest);
-    }, [userId, chatId]);
 
     useEffect(() => {
         const getMessages = async () => {

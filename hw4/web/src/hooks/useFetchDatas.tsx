@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Endpoints } from '@/lib/endpoints';
-import { User, ChatRoom } from '@/lib/types';
+import type { User, ChatRoom } from '@/lib/types';
 import { useSearchParams } from 'next/navigation';
 import { socket } from '@/lib/socket';
 
@@ -21,12 +21,14 @@ export const useFetchDatas = () => {
     }
 
     useEffect(() => {
-        socket.emit('register', userId);
-        socket.on('new message', (fromId) => {
-            if (fromId !== userId) refetch();
-        });    
-        return function cleanup() {
-            socket.off('new message');
+        if (userId > 0) {
+            socket.emit('register', userId);
+            socket.on('new message', (fromId) => {
+                if (fromId !== userId) refetch();
+            });    
+            return function cleanup() {
+                socket.off('new message');
+            }
         }
     }, [userId]);
 

@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
 import { usersTable, userChatroomsTable, messagesTable, chatroomsTable } from "@/db/schema";
-import { MessageProps } from "@/lib/types";
+import type { MessageProps } from "@/lib/types";
 import { eq, asc } from "drizzle-orm";
 import { socket } from "@/lib/socket";
 
@@ -43,7 +43,10 @@ export async function GET(request: NextRequest, { params }: MessageProps) {
 
         const pinnedMessages = await db.select({
             id: chatroomsTable.pinnedMessageId,
-            content: messagesTable.content
+            content: messagesTable.content,
+            isDeleted: messagesTable.isDeleted,
+            isHidden: messagesTable.isHidden,
+            userId: messagesTable.userId
         })
         .from(chatroomsTable)
         .innerJoin(messagesTable, eq(messagesTable.id, chatroomsTable.pinnedMessageId))

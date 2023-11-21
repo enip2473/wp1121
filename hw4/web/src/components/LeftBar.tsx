@@ -12,7 +12,7 @@ import Avatar from '@mui/material/Avatar';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { formatName } from '@/lib/utils';
 import Link from 'next/link';
-import { LeftBarProps } from '@/lib/types';
+import type { LeftBarProps } from '@/lib/types';
 
 export default function LeftBar({ displayName }: LeftBarProps) {
   return (

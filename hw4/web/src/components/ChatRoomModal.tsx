@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Box, Modal, Button, IconButton, Typography, FormControl, MenuItem } from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select, {type SelectChangeEvent } from '@mui/material/Select';
 import CloseIcon from '@mui/icons-material/Close';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { UserSelectModalProps, User } from '@/lib/types';
+import { useRouter } from 'next/navigation';
+import type { UserSelectModalProps } from '@/lib/types';
 import { Endpoints } from '@/lib/endpoints'
 import axios from 'axios';
 
-const UserSelectModal = ({ users, userId, open, onClose }: UserSelectModalProps) => {
+function UserSelectModal ({ users, userId, open, onClose }: UserSelectModalProps) {
   const [selectedUser, setSelectedUser] = useState<number | undefined>();
   const router = useRouter();
 

@@ -55,7 +55,7 @@ export default function SingleMessage({userId, users, message, handleContextMenu
                 className="flex items-center mb-4"
                 onContextMenu={(e) => handleContextMenu(e, message)}
             >
-                <Avatar src="/path-to-sender-avatar.jpg" />
+                <Avatar/>
                 <Box className="ml-2">
                 <Paper className="p-2">
                     <p>{renderMessageContent(message.content)}</p>

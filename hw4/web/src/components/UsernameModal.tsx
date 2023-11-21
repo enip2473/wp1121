@@ -5,7 +5,7 @@ import { Button, TextField, Box } from '@mui/material';
 import { useState } from 'react'
 import { Endpoints } from '@/lib/endpoints';
 import axios from 'axios';
-import { UsernameModalProps } from '@/lib/types';
+import type { UsernameModalProps } from '@/lib/types';
 export default function UsernameModal({userId, users}: UsernameModalProps){
 
     const [newName, setNewName] = useState('');

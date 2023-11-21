@@ -13,7 +13,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Box from '@mui/material/Box';
 import ChatRoomModal from '@/components/ChatRoomModal';
 import { Button, Typography } from '@mui/material';
-import { ChatRoomListProps } from '@/lib/types';
+import type { ChatRoomListProps } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { formatUsers } from '@/lib/utils';
@@ -60,11 +60,11 @@ export default function ChatRoomList({userId, chatId, users, chatRooms, refetch}
         {filteredChatRooms.length > 0 ? (
           <List className="w-full">
             {filteredChatRooms.map((chatRoom, index) => (
-              <Link href={{
+              <Link key={index} href={{
                 pathname: '/',
                 query: { id: userId, chat: chatRoom.chatroomId },
               }}>
-                <ListItem key={index} className={`border-b border-gray-300 rounded m-2 ${chatRoom.chatroomId === chatId ? 'bg-gray-200' : ''}`}>
+                <ListItem className={`border-b border-gray-300 rounded m-2 ${chatRoom.chatroomId === chatId ? 'bg-gray-200' : ''}`}>
                   <ListItemAvatar>
                     <Avatar alt={chatRoom.chatroomName} />
                   </ListItemAvatar>

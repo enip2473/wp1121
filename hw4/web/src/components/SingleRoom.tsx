@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Avatar, IconButton, Menu, MenuItem, Box, Typography, InputBase } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { Message, MousePosition, SingleRoomProps } from '@/lib/types';
+import type { User, Message, MousePosition, SingleRoomProps } from '@/lib/types';
 import { useMessages } from '@/hooks/useMessages';
 import { Endpoints } from '@/lib/endpoints';
 import axios from 'axios';
@@ -12,7 +12,6 @@ import { formatUsers } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import SingleMessage from '@/components/SingleMessage';
 import CampaignIcon from '@mui/icons-material/Campaign';
-import { User } from '@/lib/types';
 
 function ReadUsers({users}: {users: User[]}) {
   if (users.length === 0) {
@@ -20,7 +19,7 @@ function ReadUsers({users}: {users: User[]}) {
   }
   return (
     <Box className="flex justify-end mb-2">
-      {users.map(user => <Avatar className="w-[15px] h-[15px]"/>)}
+      {users.map((_, index) => <Avatar className="w-[15px] h-[15px]" key={index}/>)}
     </Box>
   )
 }
@@ -154,7 +153,6 @@ export default function SingleRoom({ refetchChatRoom }: SingleRoomProps) {
       <Box className="flex flex-col h-full w-full"></Box>
     )
   }
-
 
   return (
     <Box className="flex flex-col h-full w-full">

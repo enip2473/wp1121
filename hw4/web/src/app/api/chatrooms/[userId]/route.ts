@@ -6,7 +6,7 @@ import { usersTable, userChatroomsTable, chatroomsTable, messagesTable } from "@
 import { desc, sql } from "drizzle-orm";
 import { not, eq, or, and } from 'drizzle-orm';
 import { intersect } from 'drizzle-orm/pg-core'
-import { ChatroomProps } from "@/lib/types";
+import type { ChatroomProps } from "@/lib/types";
 import { socket } from "@/lib/socket"
 
 const postSchema = z.object({
