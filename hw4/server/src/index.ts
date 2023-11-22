@@ -40,49 +40,54 @@ const sendNotify = (users: number[], fromId: number) => {
     })
 }
 
-io.on('connection', (socket: Socket) => {
-    console.log(`New connection: Socket ID ${socket.id}`);
+const sendRead = (users: number[], fromId: number) => {
+    users.map((userId) => {
+        const toSocketIds = userSocketMap[userId];
+        if (toSocketIds) {
+            const uniqueIds = toSocketIds.filter((value, index, array) => 
+                array.indexOf(value) === index
+            )
+            uniqueIds.forEach(id => {
+                io.to(id).emit('read message', fromId);
+            });
+        }
+    })
+}
 
+
+io.on('connection', (socket: Socket) => {
     socket.on('register', (userId: string) => {
         if (!userSocketMap[userId]) {
             userSocketMap[userId] = [];
         }
         userSocketMap[userId].push(socket.id);
-        console.log(`User ID ${userId} registered with Socket ID ${socket.id}`);
     });
 
     socket.on('new message', (users: number[], fromId: number) => {
-        console.log(`New message sent from ${socket.id}`);
         sendNotify(users, fromId);
     });
 
     socket.on('update message', (users: number[], fromId: number) => {
-        console.log(`Update message from ${socket.id}`);
         sendNotify(users, fromId);
     });
 
     socket.on('read message', (users: number[], fromId: number) => {
-        console.log(`Read message from ${socket.id}`);
-        sendNotify(users, fromId);
+        sendRead(users, fromId);
     });
 
     socket.on('new chatroom', (users: number[], fromId: number) => {
-        console.log(`New chatroom sent from ${socket.id}`);
         sendNotify(users, fromId);
     });
 
     socket.on('update chatroom', (users: number[], fromId: number) => {
-        console.log(`Update chatroom from ${socket.id}`);
         sendNotify(users, fromId);
     });
 
     socket.on('delete chatroom', (users: number[], fromId: number) => {
-        console.log(`Delete chatroom sent from ${socket.id}`);
         sendNotify(users, fromId);
     });
 
     socket.on('disconnect', () => {
-        console.log(`Socket ID ${socket.id} disconnected`);
         Object.keys(userSocketMap).forEach(userId => {
             userSocketMap[userId] = userSocketMap[userId].filter(id => id !== socket.id);
             if (userSocketMap[userId].length === 0) {

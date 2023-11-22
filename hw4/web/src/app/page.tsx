@@ -8,18 +8,32 @@ import { useFetchDatas } from "@/hooks/useFetchDatas";
 
 
 export default function Home() {
-  const { userId, chatId, users, chatRooms, refetch } = useFetchDatas();
+  const { userId, chatId, users, chatRooms, chatRoomUsers, messages, pinnedMessage, refetch } = useFetchDatas();
   const displayName = users.find(user => user.id === userId)?.displayName || ''
+  
   return (
     <div className="flex min-h-screen w-full items-start bg-white justify-between">
       <Box className="flex w-[20%] h-full">
         <LeftBar displayName={displayName}/>
       </Box>
       <Box className="flex w-[30%] min-h-screen justify-start items-start p-6 bg-gray-100">
-        <ChatRoomList userId={userId} chatId={chatId} users={users} chatRooms={chatRooms} refetch={refetch}/>
+        <ChatRoomList 
+          userId={userId} 
+          chatId={chatId} 
+          users={users} 
+          chatRooms={chatRooms} 
+          refetch={refetch}
+        />
       </Box>
       <Box className="flex w-[50%] h-screen">
-        <SingleRoom refetchChatRoom={refetch}/>
+        <SingleRoom 
+          userId={userId} 
+          chatId={chatId}
+          chatRoomUsers={chatRoomUsers}
+          messages={messages}
+          pinnedMessage={pinnedMessage}
+          refetch={refetch}
+        />
       </Box>
       <UsernameModal userId={userId} users={users}/>
     </div>

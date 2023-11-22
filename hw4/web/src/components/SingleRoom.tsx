@@ -5,7 +5,7 @@ import { Avatar, IconButton, Menu, MenuItem, Box, Typography, InputBase } from '
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { User, Message, MousePosition, SingleRoomProps } from '@/lib/types';
-import { useMessages } from '@/hooks/useMessages';
+// import { useMessages } from '@/hooks/useMessages';
 import { Endpoints } from '@/lib/endpoints';
 import axios from 'axios';
 import { formatUsers } from '@/lib/utils';
@@ -24,10 +24,9 @@ function ReadUsers({users}: {users: User[]}) {
   )
 }
 
-export default function SingleRoom({ refetchChatRoom }: SingleRoomProps) {
-  const { userId, chatId, users, messages, pinnedMessage, refetch } = useMessages();
+export default function SingleRoom({ userId, chatId, chatRoomUsers, messages, pinnedMessage, refetch }: SingleRoomProps) {
 
-  const usersExcept = users.filter(user => user.id != userId);
+  const usersExcept = chatRoomUsers.filter(user => user.id != userId);
   const readStatus: User[][] = Array.from({ length: messages.length + 1 }, () => []);
 
   usersExcept.forEach(user => {
@@ -64,14 +63,12 @@ export default function SingleRoom({ refetchChatRoom }: SingleRoomProps) {
     setNewMessage('');
     await axios.post(`${Endpoints.createMessages}${chatId}`, postMessage);
     refetch();
-    refetchChatRoom();
   };
 
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete?")) {
       await axios.delete(`${Endpoints.deleteChatRoom}${chatId}`);
       refetch();
-      refetchChatRoom();
       router.push(`/?id=${userId}`);
       console.log("Deleted!");
     }
@@ -130,7 +127,6 @@ export default function SingleRoom({ refetchChatRoom }: SingleRoomProps) {
     }
     await axios.put(`${Endpoints.modifyMessages}${contextMessageId}`, putRequest);
     refetch();
-    refetchChatRoom();
     handleCloseContextMenu();
   };
 
@@ -144,7 +140,6 @@ export default function SingleRoom({ refetchChatRoom }: SingleRoomProps) {
     }
     await axios.put(`${Endpoints.modifyMessages}${contextMessageId}`, putRequest);
     refetch();
-    refetchChatRoom();
     handleCloseContextMenu();
   };
 
@@ -159,7 +154,7 @@ export default function SingleRoom({ refetchChatRoom }: SingleRoomProps) {
       <Box className="p-4 flex items-center border-b">
         <Avatar />
         <Box className="ml-4 flex-1">
-          <h3 className="text-lg font-semibold">{formatUsers(users, userId)}</h3>
+          <h3 className="text-lg font-semibold">{formatUsers(chatRoomUsers, userId)}</h3>
         </Box>
         <IconButton onClick={() => handleDelete()}>
           <DeleteIcon />
@@ -176,16 +171,16 @@ export default function SingleRoom({ refetchChatRoom }: SingleRoomProps) {
         </Box>
       )}
       <Box className="flex-1 overflow-auto p-4">
-        {updatedMessages.map((message) => 
-          <>
+        {updatedMessages.map((message, index) => 
+          <Box key={index}>
             <SingleMessage 
               userId={userId} 
-              users={users} 
+              users={chatRoomUsers} 
               message={message} 
               handleContextMenu={handleContextMenu}
             />
             <ReadUsers users={message.readUsers}/>
-          </>
+          </Box>
         )}
         <Menu
           open={myMenu !== null}

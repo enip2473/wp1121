@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Endpoints } from '@/lib/endpoints';
-import type { User, ChatRoom } from '@/lib/types';
+import type { User, Message, ChatRoom } from '@/lib/types';
 import { useSearchParams } from 'next/navigation';
 import { socket } from '@/lib/socket';
 
@@ -12,41 +12,50 @@ export const useFetchDatas = () => {
 
     const [users, setUsers] = useState<User[]>([]);
     const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
     const [refetchId, setRefetchId] = useState(0);
-    
+    const [chatRoomUsers, setChatRoomUsers] = useState<User[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [pinnedMessage, setPinnedMessage] = useState<Message | null>(null);
+
     const refetch = () => {
         setRefetchId(prev => prev + 1);
     }
 
     useEffect(() => {
+        const putRead = async () => {
+            if (userId < 0 || chatId < 0) return;
+            const putRequest = { userId, chatroomId: chatId}
+            await axios.put(Endpoints.updateHasRead, putRequest);
+        }
+        putRead();
         if (userId > 0) {
             socket.emit('register', userId);
-            socket.on('new message', (fromId) => {
-                if (fromId !== userId) refetch();
+            socket.on('new message', async (newId) => {
+                if (newId !== userId) {
+                    refetch();
+                }
+                putRead();
+            });    
+            socket.on('read message', (newId) => {
+                if (newId !== userId) refetch();
             });    
             return function cleanup() {
                 socket.off('new message');
             }
         }
-    }, [userId]);
+    }, [userId, chatId]);
+
 
     useEffect(() => {
         const getUsers = async () => {
-            setIsLoading(true);
             try {
                 const response = await axios.get(Endpoints.getUsers);
                 setUsers(response.data.users);
-                setIsLoading(false);
             } catch (err) {
                 setUsers([]);
-                setError(err as string);
-                setIsLoading(false);
             }
         };
         const getChatRooms = async () => {
-            setIsLoading(true);
             try {
                 if (userId >= 0) {
                     const response = await axios.get(`${Endpoints.getChatRooms}${userId}`);
@@ -55,15 +64,29 @@ export const useFetchDatas = () => {
                 else {
                     setChatRooms([]);
                 }
-                setIsLoading(false);
             } catch (err) {
                 setChatRooms([]);
-                setError(err as string);
-                setIsLoading(false);
             }
         }
-        Promise.all([getUsers(), getChatRooms()]);
+        const getMessages = async () => {
+            try {
+                if (chatId >= 0) {
+                    const response = await axios.get(`${Endpoints.getMessages}${chatId}`);
+                    setMessages(response.data.messages);
+                    setChatRoomUsers(response.data.users);
+                    setPinnedMessage(response.data.pinnedMessage);
+                }
+                else {
+                    setMessages([]);
+                    setChatRoomUsers([]);
+                }
+            } catch (err) {
+                setMessages([]);
+                setChatRoomUsers([]);
+            }
+        }
+        Promise.all([getUsers(), getChatRooms(), getMessages()]);
     }, [userId, chatId, refetchId]);
 
-    return { userId, chatId, users, chatRooms, isLoading, error, refetch };
+    return { userId, chatId, users, chatRooms, chatRoomUsers, messages, pinnedMessage, refetch };
 };

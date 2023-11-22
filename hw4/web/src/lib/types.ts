@@ -40,7 +40,12 @@ export type ChatroomProps = {
 }
 
 export type SingleRoomProps = {
-    refetchChatRoom: () => void
+    userId: number, 
+    chatId: number, 
+    chatRoomUsers: User[], 
+    messages: Message[], 
+    pinnedMessage: Message | null, 
+    refetch: () => void
 }
 
 

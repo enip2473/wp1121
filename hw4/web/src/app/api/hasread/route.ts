@@ -9,7 +9,6 @@ import io from "socket.io-client";
 const putSchema = z.object({
     userId: z.number().min(1),
     chatroomId: z.number().min(1),
-    notify: z.boolean().optional()
 });
 
 type PutRequest = z.infer<typeof putSchema>;
@@ -27,7 +26,7 @@ export async function PUT(request: NextRequest) {
         );
     }
 
-    const { userId, chatroomId, notify } = data as PutRequest;
+    const { userId, chatroomId } = data as PutRequest;
     const currentTime = new Date();
     const update = {
         lastRead: currentTime
@@ -44,18 +43,16 @@ export async function PUT(request: NextRequest) {
             )
             .execute();
             
-        if (notify) {
-            const response = await db.select({id: userChatroomsTable.userId})
-                .from(userChatroomsTable)
-                .where(eq(userChatroomsTable.chatroomId, chatroomId))
-                .execute();
-    
-            const users = response.map(x => x.id).filter(id => id != userId);
-            const socketURL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
-            const socket = io(socketURL);
-            socket.emit("read message", users, userId);
-        }
+        const response = await db.select({id: userChatroomsTable.userId})
+            .from(userChatroomsTable)
+            .where(eq(userChatroomsTable.chatroomId, chatroomId))
+            .execute();
 
+        const users = response.map(x => x.id).filter(id => id != userId);
+        const socketURL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
+        const socket = io(socketURL);
+        socket.emit("read message", users, userId);
+        
         return NextResponse.json(
             { status: 200 },
         );
