@@ -22,6 +22,7 @@ cp .env.example .env
 
 ```
 yarn
+yarn migrate
 yarn dev
 ```
 

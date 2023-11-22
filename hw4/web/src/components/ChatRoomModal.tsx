@@ -35,6 +35,7 @@ function UserSelectModal ({ users, userId, open, onClose }: UserSelectModalProps
     onClose();
   };
 
+  const filteredUsers = users.filter((user) => user.id != userId);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -56,8 +57,8 @@ function UserSelectModal ({ users, userId, open, onClose }: UserSelectModalProps
             displayEmpty
             inputProps={{ 'aria-label': 'Without label' }}
           >
-            {users.map((user) => (
-              <MenuItem key={user.displayName} value={user.id}>
+            {filteredUsers.map((user) => (
+              <MenuItem key={user.id} value={user.id}>
                 {user.displayName}
               </MenuItem>
             ))}
