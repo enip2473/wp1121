@@ -101,6 +101,12 @@ export async function updateTaskComplete(
     completed,
   });
 
+  await db.update(tasksTable).set({completed}).where(
+    and(
+      eq(tasksTable.projectId, projectId),
+      eq(tasksTable.displayId, taskId)
+    )
+  )
   // TODO: 9. Update the task's `completed` column
 
   // TODO: 9. end
@@ -118,6 +124,13 @@ export async function deleteTask(taskId: string, projectId: string) {
     projectId,
     taskId,
   });
+
+  await db.delete(tasksTable).where(
+    and(
+      eq(tasksTable.displayId, taskId),
+      eq(tasksTable.projectId, projectId)
+    )
+  )
 
   // TODO: 10. Delete the task whose displayId is `taskId`
 

@@ -13,6 +13,8 @@ test("9. Update the task's `completed` column", async ({ page }) => {
     .filter({ hasText: /^Task 1delete$/ })
     .getByRole("checkbox");
   await task1Checkbox.click();
+
+  
   await expect(task1Checkbox).toBeChecked();
 
   await addTask(page, "Task 2");
