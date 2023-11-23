@@ -22,6 +22,13 @@ function AuthForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    signIn("credentials", {
+      email,
+      name,
+      password,
+      callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/projects`,
+    });
+
     // TODO: 3. sign in by calling signIn() with the correct parameters
     // hint: notion clone
 

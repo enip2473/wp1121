@@ -58,13 +58,11 @@ export const usersToProjectsTable = pgTable(
   {
     id: serial("id").primaryKey(),
     userId: uuid("user_id")
-      .notNull()
       .references(() => usersTable.displayId, {
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
     projectId: uuid("project_id")
-      .notNull()
       .references(() => projectsTable.displayId, {
         onDelete: "cascade",
         onUpdate: "cascade",
