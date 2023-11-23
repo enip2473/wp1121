@@ -10,6 +10,7 @@ test("6. Update the navbar for the user's projects ", async ({ page }) => {
   await page.locator("textarea").click();
   await page.locator("textarea").fill("This is an example project for testing");
   await page.getByRole("button", { name: "Create" }).click();
+  await page.waitForTimeout(3000)
 
   const newlyCreatedProjectLink = page.locator("section > a").first();
   await expect(newlyCreatedProjectLink).toBeVisible();

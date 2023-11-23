@@ -22,6 +22,8 @@ export async function getProject(projectId: string) {
     // TODO: 8. Select the correct project by userId and projectId
 
     // TODO: 8. end
+    where: (usersToDocumentsTable, { eq, and }) => (and(eq(usersToDocumentsTable.userId, userId), eq(usersToDocumentsTable.projectId, projectId))),
+
     columns: {},
     with: {
       project: {

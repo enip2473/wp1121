@@ -35,8 +35,10 @@ test("8. Select the correct project by userId and projectId", async ({
   await signOut(page);
 
   await signInDummyUser(page, "user1");
+  await page.waitForTimeout(1500)
   const user1ProjectLink = page.getByRole("link", { name: "user1-project" });
   await user1ProjectLink.click();
+
 
   const user2Task1TitleHeading = page.getByRole("heading", {
     name: "user2-task1",

@@ -20,6 +20,7 @@ test("5. After creating a project, redirect to the project page", async ({
   await page.locator("textarea").click();
   await page.locator("textarea").fill("123123123");
   await page.getByRole("button", { name: "Create" }).click();
+  await page.waitForTimeout(3000)
 
   const title = page.locator("h1");
   await expect(title).toHaveText("new title");
