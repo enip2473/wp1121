@@ -64,6 +64,8 @@ yarn migrate
 yarn dev
 ```
 
+注意若使用 yarn build + yarn start 會讓 uploadthing 套件無法運作(因其在 build 環境下需要 callback url)。
+
 ## 每位組員負責項目
 
 -   B10902103 毛翊蓁
@@ -78,7 +80,7 @@ yarn dev
 
 3. API 設計
 
-    列出每一隻 API 具體希望達成的功能、所需資料型態及回傳格式。
+    列出每一支 API 具體希望達成的功能、所需資料型態及回傳格式。
 
 -   B10902086 曹宸睿
 
