@@ -9,23 +9,7 @@ import { Card, CardContent, Typography, Avatar, Chip, Stack, Box } from '@mui/ma
 
 import type { QuestionCardType } from '@/lib/types';
 
-function getTimeDifference(createdAt: string) {
-	const questionDate = new Date(createdAt).getTime();
-	const now = new Date().getTime();
-	const differenceInMilliseconds = now - questionDate;
-
-	const minutes = Math.floor(differenceInMilliseconds / 60000);
-	const hours = Math.floor(minutes / 60);
-	const days = Math.floor(hours / 24);
-
-	if (minutes < 60) {
-		return `${minutes} 分鐘前`;
-	} else if (hours < 24) {
-		return `${hours} 小時前`;
-	} else {
-		return `${days} 天前`;
-	}
-}
+import getTimeDifference from './getTimeDifference';
 
 function QuestionCard(question: QuestionCardType) {
 	const [visibleTags, setVisibleTags] = useState<string[]>(question.tags);

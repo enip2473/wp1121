@@ -1,7 +1,7 @@
 export default function getTimeDifference(createdAt: string) {
 	const postDate = new Date(createdAt).getTime();
 	const now = new Date().getTime();
-	const differenceInMilliseconds = now - postDate;
+	const differenceInMilliseconds = Math.max(now - postDate, 0);
 
 	const minutes = Math.floor(differenceInMilliseconds / 60000);
 	const hours = Math.floor(minutes / 60);
