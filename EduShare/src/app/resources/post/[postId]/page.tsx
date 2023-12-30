@@ -9,35 +9,20 @@ import { useParams } from 'next/navigation';
 
 import getTimeDifference from '../../../../components/getTimeDifference';
 import {
-	getQuestionDetail,
-	addCommentToQuestion,
+	getPostDetail,
+	addCommentToPost,
 	addReplyToComment,
-	interactWithQuestion,
-	interactiWithQuestionComment,
-	updateQuestionStatus,
-} from '../../../../lib/api/discussions/apiEndpoints';
+	interactWithPost,
+	interactiWithPostComment,
+} from '../../../../lib/api/resources/apiEndpoints';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CommentIcon from '@mui/icons-material/Comment';
-import DoneIcon from '@mui/icons-material/Done';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
-import {
-	List,
-	ListItem,
-	ListItemText,
-	ListItemAvatar,
-	Dialog,
-	DialogContent,
-	DialogActions,
-	DialogTitle,
-	DialogContentText,
-} from '@mui/material';
+import { List, ListItem, ListItemText, ListItemAvatar } from '@mui/material';
 import { Button, TextField } from '@mui/material';
 import {
 	useTheme,
@@ -51,27 +36,27 @@ import {
 	Divider,
 	IconButton,
 } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import MobileStepper from '@mui/material/MobileStepper';
 
-import type { QuestionCardDetailType } from '@/lib/types';
+import type { PostCardDetailType } from '@/lib/types';
 
 function Page() {
 	const theme = useTheme();
+	const { postId } = useParams<{ postId: string }>();
+	const [post, setPost] = useState<PostCardDetailType | null>(null);
 
-	const { data: session } = useSession();
-
-	const [question, setQuestion] = useState<QuestionCardDetailType | null>(null);
-	const { questionId } = useParams<{ questionId: string }>();
 	const [newComment, setNewComment] = useState('');
 	const [newReply, setNewReply] = useState<{ [commentId: number]: string }>({});
 	const [formattedTime, setFormattedTime] = useState('');
-	const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-	const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
-	const [selectedCommenterId, setSelectedCommenterId] = useState<number | null>(null);
+	const { data: session } = useSession();
 	const [activeStep, setActiveStep] = useState(0);
 	const [maxSteps, setMaxSteps] = useState(0);
-	const [isSolved, setIsSolved] = useState(false);
-	const [openSolvedDialog, setOpenSolvedDialog] = useState(false);
+
 	const [modalOpen, setModalOpen] = useState(false);
 	const [modalContent, setModalContent] = useState('');
 
@@ -83,6 +68,7 @@ function Page() {
 	const closeModal = () => {
 		setModalOpen(false);
 	};
+
 	const handleNext = () => {
 		setActiveStep((prevActiveStep) => prevActiveStep + 1);
 	};
@@ -94,61 +80,62 @@ function Page() {
 	const handleStepChange = (step: number) => {
 		setActiveStep(step);
 	};
-	const fetchQuestionDetail = async () => {
-		if (questionId) {
+	const handleCommentChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+		setNewComment(event.target.value);
+		const postData = await getPostDetail(Number(postId));
+		setPost(postData);
+	};
+	const fetchPostDetail = async () => {
+		if (postId) {
 			try {
-				const questionData = await getQuestionDetail(Number(questionId));
-				setQuestion(questionData);
-				setIsSolved(questionData.isSolved);
-				setFormattedTime(getTimeDifference(questionData.createdAt));
-				setMaxSteps(questionData.questionImages.length);
+				const postData = await getPostDetail(Number(postId));
+				setPost(postData);
+				setFormattedTime(getTimeDifference(postData.createdAt));
+				setMaxSteps(postData.postImages.length);
 			} catch (error) {
-				console.error('Error fetching question detail:', error);
+				console.error('Error fetching post detail:', error);
 			}
 		}
 	};
-	const handleCommentChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-		setNewComment(event.target.value);
-		const questionData = await getQuestionDetail(Number(questionId));
-		setQuestion(questionData);
-	};
-	const markAsBestAnswer = async (commentId: number) => {
-		try {
-			await updateQuestionStatus(Number(questionId), undefined, commentId);
-			openModal('留言已標記為最佳解答');
-			setOpenConfirmDialog(false);
-			fetchQuestionDetail();
-		} catch (error) {
-			console.error('Error marking best answer:', error);
-		}
-	};
-
 	const handleReplyChange = async (
 		commentId: number,
 		event: React.ChangeEvent<HTMLInputElement>,
 	) => {
 		setNewReply({ ...newReply, [commentId]: event.target.value });
-		const questionData = await getQuestionDetail(Number(questionId));
-		setQuestion(questionData);
+		const postData = await getPostDetail(Number(postId));
+		setPost(postData);
 	};
 	useEffect(() => {
-		fetchQuestionDetail();
-	}, [questionId]); // eslint-disable-line react-hooks/exhaustive-deps
-	if (!question) {
+		fetchPostDetail();
+	}, [postId]); // eslint-disable-line react-hooks/exhaustive-deps
+	if (!post) {
 		return <div>Loading...</div>;
 	}
-
 	const handleUpvote = async () => {
 		if (!session) {
 			openModal('登入後才可使用此功能');
 			return;
 		}
-		const actionType = question.hasUpvote ? 'remove_upvote' : 'add_upvote';
+		const actionType = post.hasUpvote ? 'remove_upvote' : 'add_upvote';
 		try {
-			await interactWithQuestion(session.user.userId, Number(questionId), actionType);
-			fetchQuestionDetail();
+			await interactWithPost(session.user.userId, Number(postId), actionType);
+			fetchPostDetail();
 		} catch (error) {
 			console.error('按讚出錯', error);
+		}
+	};
+
+	const handleDownvote = async () => {
+		if (!session) {
+			openModal('登入後才可使用此功能');
+			return;
+		}
+		const actionType = post.hasDownvote ? 'remove_downvote' : 'add_downvote';
+		try {
+			await interactWithPost(session.user.userId, Number(postId), actionType);
+			fetchPostDetail();
+		} catch (error) {
+			console.error('按倒讚出錯', error);
 		}
 	};
 
@@ -157,14 +144,15 @@ function Page() {
 			openModal('登入後才可使用此功能');
 			return;
 		}
-		const actionType = question.hasFavorite ? 'remove_favorite' : 'add_favorite';
+		const actionType = post.hasFavorite ? 'remove_favorite' : 'add_favorite';
 		try {
-			await interactWithQuestion(session.user.userId, Number(questionId), actionType);
-			fetchQuestionDetail();
+			await interactWithPost(session.user.userId, Number(postId), actionType);
+			fetchPostDetail();
 		} catch (error) {
 			console.error('收藏出錯', error);
 		}
 	};
+
 	const handleSubmitComment = async () => {
 		if (!session) {
 			openModal('登入後才可留言哦');
@@ -176,10 +164,10 @@ function Page() {
 		}
 
 		try {
-			await addCommentToQuestion(Number(questionId), session.user.userId, newComment);
+			await addCommentToPost(Number(postId), session.user.userId, newComment);
 			openModal('評論成功添加！');
 			setNewComment('');
-			await fetchQuestionDetail();
+			await fetchPostDetail();
 		} catch (error) {
 			console.error('添加評論失敗', error);
 		}
@@ -200,7 +188,7 @@ function Page() {
 			await addReplyToComment(commentId, session.user.userId, replyText);
 			openModal('回覆成功添加！');
 			setNewReply({ ...newReply, [commentId]: '' });
-			await fetchQuestionDetail();
+			await fetchPostDetail();
 		} catch (error) {
 			console.error('添加回覆失敗', error);
 		}
@@ -211,13 +199,19 @@ function Page() {
 			return;
 		}
 
-		const actionType = question.comments.find((c) => c.commentId === commentId)?.hasUpvote
-			? 'remove_upvote'
-			: 'add_upvote';
+		const hasUpvoted = post.comments.some((comment) => {
+			if (comment.commentId === commentId && comment.hasUpvote) return true;
+			const isReply = comment.replies.some((reply) => {
+				if (reply.commentId === commentId && reply.hasUpvote) return true;
+			});
+			return isReply;
+		});
+
+		const actionType = hasUpvoted ? 'remove_upvote' : 'add_upvote';
 
 		try {
-			await interactiWithQuestionComment(session.user.userId, commentId, actionType);
-			await fetchQuestionDetail();
+			await interactiWithPostComment(session.user.userId, commentId, actionType);
+			await fetchPostDetail();
 		} catch (error) {
 			console.error('按讚出错', error);
 		}
@@ -229,24 +223,21 @@ function Page() {
 			return;
 		}
 
-		const actionType = question.comments.find((c) => c.commentId === commentId)?.hasDownvote
-			? 'remove_downvote'
-			: 'add_downvote';
+		const hasDownvoted = post.comments.some((comment) => {
+			if (comment.commentId === commentId && comment.hasDownvote) return true;
+			const isReply = comment.replies.some((reply) => {
+				if (reply.commentId === commentId && reply.hasDownvote) return true;
+			});
+			return isReply;
+		});
+
+		const actionType = hasDownvoted ? 'remove_downvote' : 'add_downvote';
 
 		try {
-			await interactiWithQuestionComment(session.user.userId, commentId, actionType);
-			await fetchQuestionDetail();
+			await interactiWithPostComment(session.user.userId, commentId, actionType);
+			await fetchPostDetail();
 		} catch (error) {
 			console.error('按倒讚出错', error);
-		}
-	};
-	const handleMarkAsSolved = async () => {
-		try {
-			await updateQuestionStatus(question.questionId, true);
-			setIsSolved(true);
-			setOpenSolvedDialog(false);
-		} catch (error) {
-			console.error('Error marking question as solved:', error);
 		}
 	};
 
@@ -260,7 +251,7 @@ function Page() {
 			}}
 		>
 			<a
-				href="/discussions"
+				href="/resources"
 				style={{
 					position: 'absolute',
 					top: '-30px',
@@ -286,17 +277,6 @@ function Page() {
 					position: 'relative',
 				}}
 			>
-				{session?.user.userId === question.questionerId && (
-					<IconButton
-						sx={{ position: 'absolute', top: 8, right: 8 }}
-						onClick={() => setOpenSolvedDialog(true)}
-						disabled={isSolved}
-					>
-						<DoneIcon
-							sx={{ color: isSolved ? theme.palette.secondary.main : 'grey' }}
-						/>
-					</IconButton>
-				)}
 				<CardContent sx={{ flex: '1 0 auto', paddingBottom: '0px' }}>
 					<Stack
 						direction="row"
@@ -305,11 +285,11 @@ function Page() {
 						sx={{ flexWrap: 'wrap', overflow: 'hidden' }}
 					>
 						<Avatar
-							alt={question.questionerName}
-							src={question.profilePicture ? question.profilePicture : ''}
+							alt={post.posterName}
+							src={post.profilePicture ? post.profilePicture : ''}
 						/>
 						<Typography variant="subtitle1" component="div">
-							{question.questionerName}
+							{post.posterName}
 						</Typography>
 						<Typography variant="body2" sx={{ marginLeft: 1 }}>
 							{formattedTime}
@@ -320,7 +300,7 @@ function Page() {
 						component="div"
 						sx={{ marginTop: '10px', marginLeft: '5px', marginBottom: '10px' }}
 					>
-						{question.questionTitle}
+						{post.postTitle}
 					</Typography>
 
 					{maxSteps > 0 && (
@@ -331,7 +311,7 @@ function Page() {
 								onChangeIndex={handleStepChange}
 								enableMouseEvents
 							>
-								{question.questionImages.map((path, index) => (
+								{post.postImages.map((path, index) => (
 									<div key={index} className="flex justify-center">
 										{activeStep == index ? (
 											<Box
@@ -367,7 +347,7 @@ function Page() {
 										onClick={handleNext}
 										disabled={activeStep === maxSteps - 1}
 									>
-										下一頁
+										Next
 										{theme.direction === 'rtl' ? (
 											<KeyboardArrowLeft />
 										) : (
@@ -386,13 +366,12 @@ function Page() {
 										) : (
 											<KeyboardArrowLeft />
 										)}
-										上一頁
+										Back
 									</Button>
 								}
 							/>
 						</Box>
 					)}
-
 					<Typography
 						variant="body1"
 						color="text.main"
@@ -405,9 +384,8 @@ function Page() {
 							wordWrap: 'break-word',
 						}}
 					>
-						{question.questionContext}
+						{post.postContext}
 					</Typography>
-
 					<Box
 						sx={{
 							display: 'flex',
@@ -417,69 +395,57 @@ function Page() {
 							paddingLeft: '0px',
 							marginLeft: '10px',
 							marginTop: '10px',
-							marginBottom: '10px',
 						}}
 					>
-						{question.tags.map((tag) => (
+						{post.tags.map((tag) => (
 							<Chip key={tag} label={tag} size="medium" data-tag={tag} />
 						))}
 					</Box>
-					<Stack
-						direction="row"
-						spacing={1}
-						alignItems="center"
-						sx={{ marginTop: '10px' }}
-					>
+					<Stack direction="row" spacing={1} alignItems="center">
 						<IconButton
 							onClick={handleUpvote}
-							color={question.hasUpvote ? 'secondary' : 'default'}
+							color={post.hasUpvote ? 'secondary' : 'default'}
 						>
-							<FavoriteIcon />
+							<ThumbUpAltIcon />
 						</IconButton>
-						<Typography variant="body2">{question.upvotes}</Typography>
-
-						<IconButton color={question.hasComment ? 'secondary' : 'default'}>
+						<Typography variant="body2">{post.upvotes}</Typography>
+						<IconButton
+							onClick={handleDownvote}
+							color={post.hasDownvote ? 'secondary' : 'default'}
+						>
+							<ThumbDownAltIcon />
+						</IconButton>
+						<Typography variant="body2">{post.downvotes}</Typography>
+						<IconButton color={post.hasComment ? 'secondary' : 'default'}>
 							<CommentIcon />
 						</IconButton>
-						<Typography variant="body2">{question.commentsCount}</Typography>
+						<Typography variant="body2">{post.commentsCount}</Typography>
 						<IconButton
 							onClick={handleFavorite}
-							color={question.hasFavorite ? 'secondary' : 'default'}
+							color={post.hasFavorite ? 'secondary' : 'default'}
 						>
 							<BookmarkIcon />
 						</IconButton>
-						<Typography variant="body2">{question.favorites}</Typography>
+						<Typography variant="body2">{post.favorites}</Typography>
 					</Stack>
 				</CardContent>
+
 				<CardContent sx={{ paddingTop: '5px' }}>
 					<List sx={{ borderRadius: '30px' }}>
-						{question.comments.map((comment, index) => (
+						{post.comments.map((comment, index) => (
 							<React.Fragment key={comment.commentId}>
 								{index >= 0 && <Divider />}
 								<ListItem alignItems="flex-start">
-									<Box sx={{ display: 'flex', alignItems: 'center' }}>
-										{comment.isHelpful ? (
-											<CheckCircleIcon
-												sx={{
-													color: '#C0EDD4',
-													marginRight: 2,
-													marginTop: '8px',
-												}}
-											/>
-										) : (
-											<div style={{ width: 24, marginRight: 15 }} />
-										)}
-										<ListItemAvatar>
-											<Avatar
-												alt={comment.commenterName}
-												src={
-													comment.commenterProfilePicture
-														? comment.commenterProfilePicture
-														: ''
-												}
-											/>
-										</ListItemAvatar>
-									</Box>
+									<ListItemAvatar>
+										<Avatar
+											alt={comment.commenterName}
+											src={
+												comment.commenterProfilePicture
+													? comment.commenterProfilePicture
+													: ''
+											}
+										/>
+									</ListItemAvatar>
 									<ListItemText
 										primary={comment.commenterName}
 										primaryTypographyProps={{ variant: 'body1' }}
@@ -496,7 +462,7 @@ function Page() {
 										direction="row"
 										alignItems="center"
 										spacing={1}
-										sx={{ marginLeft: 'auto' }}
+										sx={{ marginLeft: 'auto', minWidth: '100px' }}
 									>
 										<IconButton
 											onClick={() => handleCommentUpvote(comment.commentId)}
@@ -512,18 +478,6 @@ function Page() {
 											<ThumbDownAltIcon />
 										</IconButton>
 										<Typography variant="body2">{comment.downvotes}</Typography>
-										{session?.user.userId === question.questionerId &&
-											!question.hasHelpfulComment && (
-												<IconButton
-													onClick={() => {
-														setOpenConfirmDialog(true);
-														setSelectedCommentId(comment.commentId);
-														setSelectedCommenterId(comment.commenterId);
-													}}
-												>
-													<MoreVertIcon />
-												</IconButton>
-											)}
 									</Stack>
 								</ListItem>
 
@@ -534,31 +488,16 @@ function Page() {
 												<Divider variant="inset" component="li" />
 											)}
 											<ListItem alignItems="flex-start" sx={{ pl: 8 }}>
-												<Box sx={{ display: 'flex', alignItems: 'center' }}>
-													{reply.isHelpful ? (
-														<CheckCircleIcon
-															sx={{
-																color: '#C0EDD4',
-																marginRight: 2,
-																marginTop: '8px',
-															}}
-														/>
-													) : (
-														<div
-															style={{ width: 24, marginRight: 16 }}
-														/>
-													)}
-													<ListItemAvatar>
-														<Avatar
-															alt={reply.commenterName}
-															src={
-																reply.commenterProfilePicture
-																	? reply.commenterProfilePicture
-																	: ''
-															}
-														/>
-													</ListItemAvatar>
-												</Box>
+												<ListItemAvatar>
+													<Avatar
+														alt={reply.commenterName}
+														src={
+															reply.commenterProfilePicture
+																? reply.commenterProfilePicture
+																: ''
+														}
+													/>
+												</ListItemAvatar>
 												<ListItemText
 													primary={reply.commenterName}
 													primaryTypographyProps={{ variant: 'body1' }}
@@ -613,23 +552,6 @@ function Page() {
 													<Typography variant="body2">
 														{reply.downvotes}
 													</Typography>
-													{session?.user.userId ===
-														question.questionerId &&
-														!question.hasHelpfulComment && (
-															<IconButton
-																onClick={() => {
-																	setOpenConfirmDialog(true);
-																	setSelectedCommentId(
-																		reply.commentId,
-																	);
-																	setSelectedCommenterId(
-																		reply.commenterId,
-																	);
-																}}
-															>
-																<MoreVertIcon />
-															</IconButton>
-														)}
 												</Stack>
 											</ListItem>
 										</React.Fragment>
@@ -641,12 +563,13 @@ function Page() {
 												direction="row"
 												spacing={1}
 												alignItems="center"
-												sx={{ ml: 6 }}
+												sx={{ pl: 6 }}
 											>
 												<TextField
 													fullWidth
 													variant="outlined"
 													label="Add a reply"
+													multiline
 													value={newReply[comment.commentId] || ''}
 													onChange={(e) =>
 														handleReplyChange(
@@ -654,7 +577,6 @@ function Page() {
 															e as ChangeEvent<HTMLInputElement>,
 														)
 													}
-													multiline
 													color="secondary"
 													sx={{
 														'& .MuiOutlinedInput-root': {
@@ -692,13 +614,13 @@ function Page() {
 								<ListItemText>
 									<Stack direction="row" spacing={1} alignItems="center">
 										<TextField
+											multiline
 											fullWidth
 											variant="outlined"
 											label="Add a comment"
 											value={newComment}
 											onChange={handleCommentChange}
 											color="secondary"
-											multiline
 											sx={{
 												'& .MuiOutlinedInput-root': {
 													borderRadius: '20px',
@@ -730,56 +652,6 @@ function Page() {
 					</List>
 				</CardContent>
 			</Card>
-			<Dialog
-				open={openConfirmDialog}
-				onClose={() => setOpenConfirmDialog(false)}
-				PaperProps={{ sx: { borderRadius: '10px', backgroundColor: '#FEFDFA' } }}
-			>
-				{session?.user.userId !== selectedCommenterId && (
-					<>
-						<DialogContent>
-							<Typography>
-								是否將這則留言標記為最佳解答？標記後不能再更改。
-							</Typography>
-						</DialogContent>
-						<DialogActions>
-							<Button onClick={() => setOpenConfirmDialog(false)}>取消</Button>
-							<Button
-								onClick={() => {
-									if (selectedCommentId !== null) {
-										markAsBestAnswer(selectedCommentId);
-									}
-								}}
-							>
-								確認
-							</Button>
-						</DialogActions>
-					</>
-				)}
-				{session?.user.userId === selectedCommenterId && (
-					<>
-						<DialogContent>
-							<Typography>不能將自己的留言標記為最佳解答哦！</Typography>
-						</DialogContent>
-						<DialogActions>
-							<Button onClick={() => setOpenConfirmDialog(false)}>關閉</Button>
-						</DialogActions>
-					</>
-				)}
-			</Dialog>
-			<Dialog
-				open={openSolvedDialog}
-				onClose={() => setOpenSolvedDialog(false)}
-				PaperProps={{ sx: { borderRadius: '10px', backgroundColor: '#FEFDFA' } }}
-			>
-				<DialogContent>
-					<Typography>是否將這個問題標記為已解決？標記後不能再更改。</Typography>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={() => setOpenSolvedDialog(false)}>取消</Button>
-					<Button onClick={() => handleMarkAsSolved()}>確認</Button>
-				</DialogActions>
-			</Dialog>
 			<Dialog
 				open={modalOpen}
 				onClose={closeModal}

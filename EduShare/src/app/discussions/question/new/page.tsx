@@ -103,7 +103,7 @@ function Page() {
 			router.push('/discussions');
 		} catch (error) {
 			console.error('添加問題失敗:', error);
-			openModal('提交問題時出現錯誤！');
+			openModal('點數不足！');
 		}
 	};
 
